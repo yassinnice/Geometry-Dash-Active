@@ -1,0 +1,3222 @@
+<!DOCTYPE html>
+<html lang="en" translate="no">
+<head>
+    <meta charset="UTF-8">
+    <meta name="google" content="notranslate">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Geometry Dash Active</title>
+    <link href="https://fonts.cdnfonts.com/css/pusab" rel="stylesheet">
+    <link href="https://db.onlinewebfonts.com/c/481611b76215f5b5d8c9ce562176e0d5?family=Oxygene+1+V1" rel="stylesheet">
+   <link rel="apple-touch-icon" sizes="180x180" href="active.png">
+
+    <style>
+        @import url('https://fonts.cdnfonts.com/css/pusab');
+        @import url(https://db.onlinewebfonts.com/c/481611b76215f5b5d8c9ce562176e0d5?family=Oxygene+1+V1);
+
+        @font-face {
+            font-family: "Oxygene 1 V1";
+            src: url("https://db.onlinewebfonts.com/t/481611b76215f5b5d8c9ce562176e0d5.eot");
+            src: url("https://db.onlinewebfonts.com/t/481611b76215f5b5d8c9ce562176e0d5.eot?#iefix")format("embedded-opentype"),
+            url("https://db.onlinewebfonts.com/t/481611b76215f5b5d8c9ce562176e0d5.woff2")format("woff2"),
+            url("https://db.onlinewebfonts.com/t/481611b76215f5b5d8c9ce562176e0d5.woff")format("woff"),
+            url("https://db.onlinewebfonts.com/t/481611b76215f5b5d8c9ce562176e0d5.ttf")format("truetype"),
+            url("https://db.onlinewebfonts.com/t/481611b76215f5b5d8c9ce562176e0d5.svg#Oxygene 1 V1")format("svg");
+        }
+
+        :root {
+            --gd-blue-top: #0066ff;
+            --gd-blue-bot: #001d66;
+            --gd-green-top: #77ff33;
+            --gd-green-bot: #11aa00;
+            --gd-cyan-top: #44ddff;
+            --gd-cyan-bot: #0066aa;
+            --gd-brown-bg: #995533;
+            --gd-brown-dark: #7a4226;
+            --gd-brown-row: #a8603a;
+            --gd-brown-row-alt: #8f4f2d;
+            --gd-gold: #ffdd22;
+            --stroke-sm: -1.5px -1.5px 0 #000, 1.5px -1.5px 0 #000, -1.5px 1.5px 0 #000, 1.5px 1.5px 0 #000, 0 2px 2px rgba(0,0,0,0.8);
+            --stroke-md: -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000, 2px 2px 0 #000, 0 3px 3px rgba(0,0,0,0.85);
+            --stroke-lg: -3px -3px 0 #000, 3px -3px 0 #000, -3px 3px 0 #000, 3px 3px 0 #000, 0 4px 4px rgba(0,0,0,0.9);
+        }
+
+        * {
+            box-sizing: border-box;
+            user-select: none;
+            -webkit-user-select: none;
+            -webkit-touch-callout: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        html, body {
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+            background: #000;
+            font-family: 'Pusab', Impact, sans-serif;
+            color: #fff;
+            position: fixed;
+            top: 0;
+            left: 0;
+        }
+
+        #app {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            background: linear-gradient(to bottom, var(--gd-blue-top), var(--gd-blue-bot));
+            overflow: hidden;
+        }
+
+        .bg-squares {
+            position: absolute;
+            inset: 0;
+            background-image:
+                linear-gradient(rgba(0,0,0,0.18) 3px, transparent 3px),
+                linear-gradient(90deg, rgba(0,0,0,0.18) 3px, transparent 3px);
+            background-size: 12vh 12vh;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .screen {
+            position: absolute;
+            inset: 0;
+            display: none;
+            z-index: 10;
+        }
+        .screen.active {
+            display: flex;
+        }
+
+        .modal-overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.76);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+        }
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        /* Standard GD Buttons */
+        .gd-btn {
+            background: linear-gradient(to bottom, var(--gd-green-top) 0%, var(--gd-green-bot) 100%);
+            border: 2.5px solid #000;
+            outline: 2px solid #fff;
+            border-radius: 1.3vh;
+            color: #fff;
+            font-family: 'Pusab', sans-serif;
+            font-size: 2.3vh;
+            text-shadow: var(--stroke-md);
+            box-shadow: inset 0 4px 0 rgba(255,255,255,0.45), 0 5px 8px rgba(0,0,0,0.6);
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.8vh;
+            padding: 1vh 2.2vh;
+            transition: transform 0.06s ease;
+            position: relative;
+        }
+        .gd-btn:active { transform: scale(0.93); }
+        .gd-btn.cyan { background: linear-gradient(to bottom, var(--gd-cyan-top), var(--gd-cyan-bot)); }
+        .gd-btn.gray { background: linear-gradient(to bottom, #99aab5, #4f5d65); }
+        .gd-btn.orange { background: linear-gradient(to bottom, #ffbb33, #cc5500); }
+        .gd-btn.pink { background: linear-gradient(to bottom, #ff77ee, #aa2299); }
+        .gd-btn.red { background: linear-gradient(to bottom, #ff5544, #aa1100); }
+        .gd-btn.circle {
+            border-radius: 50%;
+            padding: 0;
+            width: 7.5vh;
+            height: 7.5vh;
+        }
+
+        .back-arrow {
+            position: absolute;
+            top: 2.2vh;
+            left: 2.2vh;
+            width: 7.5vh;
+            height: 7.5vh;
+            cursor: pointer;
+            z-index: 50;
+            filter: drop-shadow(0 3px 3px rgba(0,0,0,0.8));
+            transition: transform 0.06s;
+        }
+        .back-arrow:active { transform: scale(0.9); }
+
+        /* Classic GD Green/Cyan Frame */
+        .gd-frame {
+            width: 92vw;
+            height: 88vh;
+            margin: auto;
+            background: var(--gd-brown-bg);
+            border: 4px solid #000;
+            border-radius: 2vh;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.8);
+            overflow: hidden;
+        }
+        .gd-frame-top, .gd-frame-bot {
+            height: 8.5vh;
+            background: linear-gradient(to bottom, #88ff22, #33aa00);
+            border-bottom: 4px solid #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            z-index: 5;
+            box-shadow: inset 0 4px 0 rgba(255,255,255,0.4);
+        }
+        .gd-frame-bot {
+            height: 5.5vh;
+            border-bottom: none;
+            border-top: 4px solid #000;
+        }
+        .gd-frame-top::before, .gd-frame-top::after,
+        .gd-frame-bot::before, .gd-frame-bot::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 6vh;
+            background: linear-gradient(to bottom, #33ffff, #0088aa);
+            border-left: 4px solid #000;
+            border-right: 4px solid #000;
+        }
+        .gd-frame-top::before, .gd-frame-bot::before { left: 0; }
+        .gd-frame-top::after, .gd-frame-bot::after { right: 0; }
+
+        .gd-frame-title {
+            font-size: 4.6vh;
+            text-shadow: var(--stroke-lg);
+            letter-spacing: 1px;
+        }
+        .gd-frame-body {
+            flex: 1;
+            overflow-y: auto;
+            border-left: 3vh solid #55cc11;
+            border-right: 3vh solid #55cc11;
+            background: var(--gd-brown-dark);
+        }
+
+        .level-row {
+            background: var(--gd-brown-row);
+            border-bottom: 3px solid #5a2e18;
+            padding: 1.6vh 2.5vh;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .level-row:nth-child(even) { background: var(--gd-brown-row-alt); }
+        .level-left {
+            display: flex;
+            align-items: center;
+            gap: 2.5vh;
+        }
+        .diff-box {
+            width: 10vh;
+            height: 11vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        .diff-label {
+            font-size: 1.4vh;
+            text-shadow: var(--stroke-sm);
+            margin-top: 0.3vh;
+            text-align: center;
+        }
+        .level-meta h3 {
+            font-size: 3.8vh;
+            text-shadow: var(--stroke-md);
+        }
+        .level-meta .author {
+            font-size: 2.2vh;
+            color: var(--gd-gold);
+            text-shadow: var(--stroke-sm);
+            margin: 0.2vh 0;
+        }
+        .level-meta .song {
+            font-size: 1.9vh;
+            color: #ff66cc;
+            text-shadow: var(--stroke-sm);
+        }
+        .level-meta .stats-line {
+            display: flex;
+            gap: 2.2vh;
+            font-size: 1.9vh;
+            text-shadow: var(--stroke-sm);
+            margin-top: 0.5vh;
+            align-items: center;
+        }
+
+        /* ==========================================
+           SCREEN 1: MAIN MENU
+           ========================================== */
+        #screen-main {
+            background: linear-gradient(to bottom, #5a18c9 0%, #290766 75%, #441299 75%, #220655 100%);
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+            padding: 3vh 4vh;
+        }
+        .main-logo {
+            font-family: "Oxygene 1 V1";
+            margin-top: 1vh;
+            font-size: 9vh;
+            color: #77ff33;
+            text-shadow: -4px -4px 0 #000, 4px -4px 0 #000, -4px 4px 0 #000, 4px 4px 0 #000, 0 6px 0 #1b5500, 0 8px 12px rgba(0,0,0,0.9);
+            letter-spacing: 3px;
+            text-align: center;
+            z-index: 10;
+        }
+        .main-center-row {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5vh;
+            z-index: 10;
+            margin-top: -2vh;
+        }
+        .cross-btn {
+            cursor: pointer;
+            transition: transform 0.08s;
+            filter: drop-shadow(0 6px 8px rgba(0,0,0,0.7));
+        }
+        .cross-btn:active { transform: scale(0.92); }
+
+        .main-profile-btn {
+            position: absolute;
+            left: 5vh;
+            bottom: 24vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+            z-index: 20;
+        }
+        .main-profile-btn span {
+            font-size: 2vh;
+            color: var(--gd-gold);
+            text-shadow: var(--stroke-sm);
+            margin-bottom: 0.6vh;
+        }
+        .main-daily-btn {
+            position: absolute;
+            right: 5vh;
+            top: 40vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+            z-index: 20;
+        }
+        .main-bottom-row {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            z-index: 15;
+        }
+        .socials-block { display: flex; flex-direction: column; gap: 1vh; }
+        .socials-icons { display: flex; gap: 1vh; }
+        .soc-icon {
+            width: 6vh;
+            height: 6vh;
+            border-radius: 1.2vh;
+            border: 3px solid #000;
+            outline: 2px solid #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: sans-serif;
+            font-weight: 900;
+            font-size: 3vh;
+            cursor: pointer;
+            box-shadow: inset 0 3px 0 rgba(255,255,255,0.4);
+        }
+        .robtop-logo {
+            background: #ff8800;
+            border: 3px solid #000;
+            border-radius: 1.5vh;
+            padding: 0.4vh 1.8vh;
+            font-size: 3.2vh;
+            color: #000;
+            text-shadow: 0 1px 0 #ffcc00;
+            display: inline-block;
+        }
+        .main-circle-dock { display: flex; gap: 2.5vh; }
+
+        /* ==========================================
+           SCREEN 2: CREATOR GRID
+           ========================================== */
+        #screen-creator { justify-content: center; align-items: center; }
+        .creator-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 16vh);
+            grid-template-rows: repeat(3, 16vh);
+            gap: 2.6vh;
+            z-index: 10;
+        }
+        .creator-tile {
+            background: linear-gradient(to bottom, #77ff22, #119900);
+            border: 3px solid #000;
+            outline: 2.5px solid #fff;
+            border-radius: 1.5vh;
+            box-shadow: inset 0 5px 0 rgba(255,255,255,0.4), 0 6px 10px rgba(0,0,0,0.65);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1.4vh 0.8vh 1vh;
+            cursor: pointer;
+            position: relative;
+            transition: transform 0.06s;
+        }
+        .creator-tile:active { transform: scale(0.93); }
+        .creator-tile.locked { background: linear-gradient(to bottom, #777, #333); }
+        .creator-tile .tile-icon { font-size: 6.2vh; filter: drop-shadow(0 3px 2px rgba(0,0,0,0.6)); }
+        .creator-tile .tile-label { font-size: 2vh; text-shadow: var(--stroke-sm); text-align: center; }
+        .exclaim-badge {
+            position: absolute;
+            top: 0.6vh;
+            left: 1vh;
+            color: #ff2200;
+            font-size: 4.2vh;
+            text-shadow: var(--stroke-sm);
+        }
+
+        /* ==========================================
+           SCREEN 3 & 4: GARAGE & SHOP
+           ========================================== */
+        #screen-garage {
+            background: linear-gradient(to bottom, #666, #2b2b2b);
+            flex-direction: column;
+            align-items: center;
+            padding: 2vh 4vh;
+        }
+        .garage-header {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            height: 10vh;
+        }
+        .shop-hanging-sign {
+            position: absolute;
+            left: 14vh;
+            top: -1vh;
+            background: linear-gradient(to bottom, #d97724, #8f4209);
+            border: 3px solid #000;
+            border-radius: 1vh;
+            padding: 1vh 2.5vh;
+            transform: rotate(-6deg);
+            cursor: pointer;
+            box-shadow: 0 5px 8px rgba(0,0,0,0.7);
+            text-align: center;
+            font-size: 2.4vh;
+            color: var(--gd-gold);
+            text-shadow: var(--stroke-sm);
+        }
+        .garage-stats-right {
+            position: absolute;
+            right: 2vh;
+            top: 1vh;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 0.4vh;
+            font-size: 2.1vh;
+            text-shadow: var(--stroke-sm);
+            z-index: 20;
+        }
+        .garage-preview-box {
+            width: 14vh;
+            height: 14vh;
+            margin: 1vh 0 2vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .garage-mode-tabs {
+            display: flex;
+            gap: 1.5vh;
+            margin-bottom: 1.5vh;
+            border-top: 2px solid rgba(255,255,255,0.4);
+            padding-top: 1.5vh;
+        }
+        .mode-tab {
+            width: 6.5vh;
+            height: 6.5vh;
+            border-radius: 50%;
+            background: linear-gradient(to bottom, #999, #444);
+            border: 3px solid #000;
+            outline: 2px solid #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3vh;
+            cursor: pointer;
+        }
+        .mode-tab.active { background: linear-gradient(to bottom, #33ffff, #0088aa); }
+        .garage-grid-box {
+            width: 78vw;
+            height: 36vh;
+            background: rgba(0,0,0,0.45);
+            border-radius: 2vh;
+            padding: 2vh;
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            grid-template-rows: repeat(3, 1fr);
+            gap: 1.2vh;
+        }
+        .icon-slot {
+            background: #777;
+            border: 3px solid #000;
+            border-radius: 0.8vh;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .icon-slot.selected { outline: 3px solid #fff; background: #ff2288; }
+
+        #screen-shop {
+            background: repeating-linear-gradient(0deg, #3a1807 0px, #3a1807 24px, #291003 24px, #291003 28px);
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-end;
+            padding-bottom: 3vh;
+        }
+        .shop-top-sign {
+            position: absolute;
+            top: 2vh;
+            left: 22vw;
+            background: linear-gradient(to bottom, #dd6611, #883300);
+            border: 4px solid #000;
+            border-radius: 1.5vh;
+            padding: 1vh 4vh;
+            font-size: 4vh;
+            color: var(--gd-gold);
+            text-shadow: var(--stroke-md);
+            box-shadow: 0 8px 15px rgba(0,0,0,0.8);
+        }
+        .shop-orbs-counter {
+            position: absolute;
+            top: 2.5vh;
+            right: 4vh;
+            font-size: 4vh;
+            text-shadow: var(--stroke-md);
+            display: flex;
+            align-items: center;
+            gap: 1vh;
+        }
+        .shop-cabinet {
+            width: 84vw;
+            height: 58vh;
+            background: #4e220c;
+            border: 3vh solid #7c3816;
+            outline: 4px solid #000;
+            border-radius: 1vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-evenly;
+            box-shadow: inset 0 0 30px rgba(0,0,0,0.8);
+        }
+        .shop-shelf {
+            display: flex;
+            justify-content: space-around;
+            align-items: flex-end;
+            border-bottom: 3vh solid #7c3816;
+            padding-bottom: 1vh;
+            height: 48%;
+        }
+        .shop-product { display: flex; flex-direction: column; align-items: center; cursor: pointer; }
+        .shop-product:active { transform: scale(0.92); }
+        .shop-price { font-size: 2.4vh; text-shadow: var(--stroke-sm); margin-top: 0.8vh; }
+
+        /* ==========================================
+           SCREEN 5: SEARCH MENU
+           ========================================== */
+        #screen-search {
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 1.4vh;
+        }
+        .search-bar-container {
+            width: 74vw;
+            background: rgba(0, 15, 60, 0.7);
+            border-radius: 2vh;
+            padding: 1.2vh 2vh;
+            display: flex;
+            align-items: center;
+            gap: 1.5vh;
+        }
+        .search-input, .gd-text-input {
+            flex: 1;
+            background: #001a55;
+            border: 3px solid #000;
+            border-radius: 1.2vh;
+            height: 6.2vh;
+            padding: 0 2vh;
+            color: #fff;
+            font-family: 'Pusab', sans-serif;
+            font-size: 2.5vh;
+            text-shadow: var(--stroke-sm);
+            outline: none;
+        }
+        .quick-search-box {
+            width: 74vw;
+            background: rgba(0, 15, 60, 0.7);
+            border-radius: 2vh;
+            padding: 1.8vh;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.4vh;
+        }
+        .filters-bar {
+            width: 74vw;
+            background: rgba(0, 15, 60, 0.7);
+            border-radius: 2vh;
+            padding: 1.4vh 2vh;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+        }
+        .filter-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+            opacity: 0.65;
+            transition: transform 0.1s, opacity 0.1s;
+        }
+        .filter-item.selected, .filter-item:hover { opacity: 1; transform: scale(1.1); }
+        .filter-item span {
+            font-size: 1.4vh;
+            text-shadow: var(--stroke-sm);
+            margin-top: 0.4vh;
+            text-align: center;
+        }
+        .length-bar {
+            width: 74vw;
+            background: rgba(0, 15, 60, 0.7);
+            border-radius: 2vh;
+            padding: 1.4vh 3vh;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 2.4vh;
+            text-shadow: var(--stroke-sm);
+        }
+        .len-opt { color: #8899bb; cursor: pointer; }
+        .len-opt.active { color: #fff; }
+
+        /* ==========================================
+           SCREEN 7: LEVEL INFO / EDIT (image_20)
+           ========================================== */
+        #screen-level-info {
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 2vh;
+        }
+        .lvl-title-box {
+            width: 68vw;
+            background: rgba(0, 15, 60, 0.65);
+            border-radius: 2vh;
+            padding: 1.5vh;
+            text-align: center;
+            font-size: 4.8vh;
+            text-shadow: var(--stroke-lg);
+            cursor: pointer;
+        }
+        .lvl-desc-box {
+            width: 68vw;
+            min-height: 12vh;
+            background: rgba(0, 15, 60, 0.65);
+            border-radius: 2vh;
+            padding: 2vh;
+            text-align: center;
+            font-size: 2.5vh;
+            font-family: sans-serif;
+            color: #cceeff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+        .lvl-main-circles {
+            display: flex;
+            gap: 5vh;
+            align-items: center;
+            margin: 0.5vh 0;
+        }
+        .giant-circle-btn {
+            width: 18vh;
+            height: 18vh;
+            border-radius: 50%;
+            background: linear-gradient(to bottom, #77ff22, #119900);
+            border: 4px solid #000;
+            outline: 4px solid #fff;
+            box-shadow: inset 0 6px 0 rgba(255,255,255,0.45), 0 8px 16px rgba(0,0,0,0.75);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 8.5vh;
+            cursor: pointer;
+            transition: transform 0.08s;
+        }
+        .giant-circle-btn:active { transform: scale(0.92); }
+
+        /* ==========================================
+           SCREEN 8: AUTHENTIC LEVEL EDITOR (image_1, 4)
+           ========================================== */
+        #screen-editor {
+            flex-direction: column;
+            justify-content: space-between;
+            background: #0055cc;
+        }
+        #editor-canvas {
+            position: absolute;
+            inset: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 1;
+        }
+        .editor-hud-top {
+            position: relative;
+            z-index: 10;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.2vh 2vh;
+            pointer-events: none;
+        }
+        .editor-hud-top > * { pointer-events: auto; }
+        .editor-left-dock {
+            position: absolute;
+            left: 1.5vh;
+            top: 12vh;
+            display: flex;
+            flex-direction: column;
+            gap: 1.4vh;
+            z-index: 10;
+        }
+        .editor-right-pad {
+            position: absolute;
+            right: 1.5vh;
+            top: 11vh;
+            display: grid;
+            grid-template-columns: repeat(3, 8.6vh);
+            gap: 0.9vh;
+            z-index: 10;
+        }
+        .ed-pad-btn {
+            height: 6.4vh;
+            border-radius: 1vh;
+            border: 2px solid #000;
+            outline: 1.5px solid #fff;
+            font-family: 'Pusab', sans-serif;
+            color: #fff;
+            font-size: 1.45vh;
+            text-shadow: var(--stroke-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            cursor: pointer;
+            box-shadow: inset 0 3px 0 rgba(255,255,255,0.35);
+        }
+        .ed-pad-btn:active { transform: scale(0.93); }
+        .editor-layer-bar {
+            position: absolute;
+            right: 2vh;
+            bottom: 30vh;
+            display: flex;
+            align-items: center;
+            gap: 1.2vh;
+            z-index: 10;
+            font-size: 2.8vh;
+            text-shadow: var(--stroke-md);
+        }
+        .editor-bottom-bar {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100vw;
+            height: 29vh;
+            background: rgba(15, 20, 28, 0.95);
+            border-top: 3px solid #fff;
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+        }
+        .editor-subtabs {
+            height: 5.4vh;
+            background: #003388;
+            border-bottom: 2px solid #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 0.7vh;
+        }
+        .ed-subtab {
+            width: 6.8vh;
+            height: 4.4vh;
+            background: rgba(255,255,255,0.18);
+            border: 2px solid #000;
+            outline: 1px solid #99bbff;
+            border-radius: 0.8vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8vh;
+            text-shadow: var(--stroke-sm);
+            cursor: pointer;
+        }
+        .ed-subtab.active {
+            background: linear-gradient(to bottom, #44eeff, #0077aa);
+            outline: 2px solid #fff;
+        }
+        .editor-lower-deck {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1vh 1.8vh;
+            gap: 1.5vh;
+        }
+        .ed-mode-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 9.5vh);
+            grid-template-rows: repeat(2, 9.5vh);
+            gap: 1vh;
+        }
+        .ed-palette-grid {
+            flex: 1;
+            height: 100%;
+            display: grid;
+            grid-template-columns: repeat(8, 1fr);
+            grid-template-rows: repeat(3, 1fr);
+            gap: 0.8vh;
+            padding: 0.4vh 1.5vh;
+        }
+        .palette-slot {
+            background: linear-gradient(to bottom, #666, #333);
+            border: 2px solid #000;
+            outline: 1.5px solid #bbb;
+            border-radius: 0.8vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-size: 2vh;
+            text-shadow: var(--stroke-sm);
+            cursor: pointer;
+            position: relative;
+        }
+        .palette-slot.selected {
+            outline: 2.5px solid #00ffff;
+            background: linear-gradient(to bottom, #2299bb, #114466);
+        }
+        .palette-slot small {
+            font-size: 1.15vh;
+            margin-top: 0.2vh;
+            color: #ffdd44;
+        }
+
+        /* ==========================================
+           MODALS
+           ========================================== */
+        .modal-card {
+            width: 82vw;
+            height: 82vh;
+            background: var(--gd-brown-bg);
+            border: 4px solid #000;
+            outline: 4px solid #fff;
+            border-radius: 2.5vh;
+            position: relative;
+            padding: 3vh 4vh;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.9);
+        }
+        .modal-close-x {
+            position: absolute;
+            top: -2.5vh;
+            left: -2.5vh;
+            width: 7.5vh;
+            height: 7.5vh;
+            border-radius: 50%;
+            background: linear-gradient(to bottom, #99ff22, #22aa00);
+            border: 3px solid #000;
+            outline: 2.5px solid #fff;
+            color: #ffdd00;
+            font-size: 4vh;
+            text-shadow: var(--stroke-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 20;
+        }
+        .chk-row {
+            display: flex;
+            align-items: center;
+            gap: 1.5vh;
+            font-size: 2.2vh;
+            text-shadow: var(--stroke-sm);
+            cursor: pointer;
+        }
+        .chk-box {
+            width: 4.8vh;
+            height: 4.8vh;
+            background: #999;
+            border: 3px solid #000;
+            outline: 2px solid #fff;
+            border-radius: 0.8vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3.6vh;
+            color: #66ff22;
+        }
+        .trigger-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: rgba(0,0,0,0.3);
+            padding: 1.4vh 2.5vh;
+            border-radius: 1.5vh;
+            font-size: 2.5vh;
+            text-shadow: var(--stroke-sm);
+        }
+        .num-Display {
+            min-width: 10vh;
+            text-align: center;
+            background: #111;
+            border: 2px solid #fff;
+            border-radius: 1vh;
+            padding: 0.6vh 1.5vh;
+            font-size: 2.6vh;
+            color: #44ffdd;
+        }
+    </style>
+</head>
+<body>
+
+<div id="app">
+    <div class="bg-squares"></div>
+
+    <!-- ==========================================
+         1. MAIN MENU (image_15)
+         ========================================== -->
+    <div id="screen-main" class="screen active">
+        <div class="main-logo" style="font-family: 'Oxygene 1 V1';">GEOMETRY DASH: ACTIVE</div>
+
+        <div class="main-profile-btn" onclick="openModal('modal-profile')">
+            <span>YASSINPLAYZ245</span>
+            <div class="gd-btn cyan circle" style="width:10.5vh; height:10.5vh; font-size:5vh;">👤</div>
+        </div>
+
+        <div class="main-center-row">
+            <div class="cross-btn" onclick="showScreen('screen-garage')" style="width:19vh; height:19vh;">
+                <svg viewBox="0 0 100 100" width="100%" height="100%">
+                    <rect x="18" y="18" width="64" height="64" rx="6" fill="#00d5ff" stroke="#000" stroke-width="4"/>
+                    <rect x="28" y="8" width="44" height="84" rx="6" fill="#55dd11" stroke="#000" stroke-width="4"/>
+                    <rect x="8" y="28" width="84" height="44" rx="6" fill="#77ff22" stroke="#000" stroke-width="4"/>
+                    <rect x="26" y="26" width="48" height="48" rx="4" fill="#ffbb00" stroke="#000" stroke-width="4"/>
+                    <rect x="34" y="36" width="10" height="10" fill="#000"/>
+                    <rect x="56" y="36" width="10" height="10" fill="#000"/>
+                    <rect x="34" y="56" width="32" height="8" fill="#000"/>
+                </svg>
+            </div>
+
+            <div class="cross-btn" onclick="launchLevel('STEREO MADNESS', 'NORMAL', '#0055ff', '#001166', 8.5, false, 'STEREO MADNESS')" style="width:26vh; height:26vh;">
+                <svg viewBox="0 0 100 100" width="100%" height="100%">
+                    <rect x="16" y="16" width="68" height="68" rx="6" fill="#00d5ff" stroke="#000" stroke-width="4"/>
+                    <rect x="28" y="6" width="44" height="88" rx="6" fill="#55dd11" stroke="#000" stroke-width="4"/>
+                    <rect x="6" y="28" width="88" height="44" rx="6" fill="#77ff22" stroke="#000" stroke-width="4"/>
+                    <polygon points="34,24 76,50 34,76" fill="#ffbb00" stroke="#000" stroke-width="4" stroke-linejoin="round"/>
+                </svg>
+            </div>
+
+            <div class="cross-btn" onclick="showScreen('screen-creator')" style="width:19vh; height:19vh;">
+                <svg viewBox="0 0 100 100" width="100%" height="100%">
+                    <rect x="18" y="18" width="64" height="64" rx="6" fill="#00d5ff" stroke="#000" stroke-width="4"/>
+                    <rect x="28" y="8" width="44" height="84" rx="6" fill="#55dd11" stroke="#000" stroke-width="4"/>
+                    <rect x="8" y="28" width="84" height="44" rx="6" fill="#77ff22" stroke="#000" stroke-width="4"/>
+                    <path d="M28,72 L72,28 M32,28 L72,68" stroke="#ffbb00" stroke-width="11" stroke-linecap="round"/>
+                </svg>
+            </div>
+        </div>
+
+        <div class="main-daily-btn" onclick="showScreen('screen-levels', 'DAILY LEVEL')">
+            <div style="font-size:6.5vh; filter:drop-shadow(0 3px 3px #000);">🧰</div>
+            <span style="font-size:2.4vh; color:var(--gd-gold); text-shadow:var(--stroke-sm); margin-top:-1vh;">DAILY</span>
+        </div>
+
+        <div class="main-bottom-row">
+            <div class="socials-block">
+                <div class="socials-icons">
+                    <div class="soc-icon" style="background:#3b5998;">f</div>
+                    <div class="soc-icon" style="background:#1da1f2;">𝕏</div>
+                    <div class="soc-icon" style="background:#ff0000;">▶</div>
+                    <div class="soc-icon" style="background:#6441a5;">💬</div>
+                </div>
+                <div style="display:flex; align-items:center; gap:1vh;">
+                    <div class="robtop-logo">ROBTOP</div>
+                    <div class="soc-icon" style="background:#5865F2; width:5.5vh; height:5.5vh; font-size:2.5vh;">🎮</div>
+                </div>
+            </div>
+
+            <div class="main-circle-dock">
+                <button class="gd-btn circle" style="width:9.5vh; height:9.5vh; font-size:4.5vh;" onclick="showScreen('screen-levels', 'LEADERBOARDS')">🏆</button>
+                <button class="gd-btn circle" style="width:9.5vh; height:9.5vh; font-size:4.5vh;" onclick="openModal('modal-settings')">⚙️</button>
+                <button class="gd-btn circle" style="width:9.5vh; height:9.5vh; font-size:4.5vh;" onclick="openModal('modal-profile')">📊</button>
+                <button class="gd-btn circle" style="width:9.5vh; height:9.5vh; font-size:4.5vh;" onclick="openModal('modal-song-picker')">🎵</button>
+            </div>
+
+            <div style="position:relative; cursor:pointer;" onclick="openModal('modal-news')">
+                <span style="position:absolute; top:-2.5vh; right:1vh; font-size:5vh; color:#ff2200; text-shadow:var(--stroke-md);">!</span>
+                <div class="gd-btn cyan circle" style="width:11vh; height:11vh; flex-direction:column;">
+                    <span style="font-size:2.4vh; color:var(--gd-gold);">NEWS</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==========================================
+         2. CREATOR MENU (image_19)
+         ========================================== -->
+    <div id="screen-creator" class="screen">
+        <svg class="back-arrow" onclick="showScreen('screen-main')" viewBox="0 0 100 100">
+            <polygon points="80,15 20,50 80,85" fill="#77ff22" stroke="#000" stroke-width="8" stroke-linejoin="round"/>
+        </svg>
+
+        <div class="creator-grid">
+            <div class="creator-tile" onclick="showScreen('screen-levels', 'MY LEVELS')">
+                <div class="tile-icon">🛠️</div>
+                <div class="tile-label">CREATE</div>
+            </div>
+            <div class="creator-tile" onclick="showScreen('screen-levels', 'SAVED LEVELS')">
+                <div class="tile-icon">📁</div>
+                <div class="tile-label">SAVED</div>
+            </div>
+            <div class="creator-tile" onclick="showScreen('screen-levels', 'TOP SCORES')">
+                <div class="tile-icon">🥇</div>
+                <div class="tile-label">SCORES</div>
+            </div>
+            <div class="creator-tile" onclick="showScreen('screen-levels', 'QUESTS')">
+                <div class="tile-icon">📜</div>
+                <div class="tile-label">QUESTS</div>
+            </div>
+            <div class="creator-tile locked" onclick="showScreen('screen-levels', 'VERSUS')">
+                <div class="tile-icon">⚔️</div>
+                <div class="tile-label">VERSUS</div>
+            </div>
+
+            <div class="creator-tile locked" onclick="showScreen('screen-levels', 'THE MAP')">
+                <div class="tile-icon">🗺️</div>
+                <div class="tile-label">THE MAP</div>
+            </div>
+            <div class="creator-tile" onclick="showScreen('screen-levels', 'DAILY')">
+                <span class="exclaim-badge">!</span>
+                <div class="tile-icon">👑</div>
+                <div class="tile-label">DAILY</div>
+            </div>
+            <div class="creator-tile" onclick="showScreen('screen-levels', 'WEEKLY DEMON')">
+                <span class="exclaim-badge">!</span>
+                <div class="tile-icon">😈</div>
+                <div class="tile-label">WEEKLY</div>
+            </div>
+            <div class="creator-tile" onclick="showScreen('screen-levels', 'EVENT LEVEL')">
+                <span class="exclaim-badge">!</span>
+                <div class="tile-icon">👾</div>
+                <div class="tile-label">EVENT</div>
+            </div>
+            <div class="creator-tile" onclick="showScreen('screen-levels', 'GAUNTLETS')">
+                <div class="tile-icon">🌋</div>
+                <div class="tile-label">GAUNTLETS</div>
+            </div>
+
+            <div class="creator-tile" onclick="showScreen('screen-levels', 'FEATURED')">
+                <div class="tile-icon">⭐</div>
+                <div class="tile-label">FEATURED</div>
+            </div>
+            <div class="creator-tile" onclick="showScreen('screen-levels', 'MY LISTS')">
+                <div class="tile-icon">📘</div>
+                <div class="tile-label">LISTS</div>
+            </div>
+            <div class="creator-tile" onclick="showScreen('screen-levels', 'PATHS')">
+                <div class="tile-icon">💠</div>
+                <div class="tile-label">PATHS</div>
+            </div>
+            <div class="creator-tile" onclick="showScreen('screen-levels', 'MAP PACKS')">
+                <div class="tile-icon">🗂️</div>
+                <div class="tile-label">MAP PACKS</div>
+            </div>
+            <div class="creator-tile" onclick="showScreen('screen-search')">
+                <div class="tile-icon">🔍</div>
+                <div class="tile-label">SEARCH</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==========================================
+         3. ICON KIT / GARAGE (image_18)
+         ========================================== -->
+    <div id="screen-garage" class="screen">
+        <svg class="back-arrow" onclick="showScreen('screen-main')" viewBox="0 0 100 100">
+            <polygon points="80,15 20,50 80,85" fill="#ff77cc" stroke="#000" stroke-width="8" stroke-linejoin="round"/>
+        </svg>
+
+        <div class="garage-header">
+            <div class="shop-hanging-sign" onclick="showScreen('screen-shop')">THE<br>SHOP</div>
+            <div style="font-size:4.8vh; color:var(--gd-gold); text-shadow:var(--stroke-lg);">YASSINPLAYZ245</div>
+        </div>
+
+        <div class="garage-stats-right">
+            <div>266 ⭐</div>
+            <div>125 🌙</div>
+            <div>47 🪙</div>
+            <div>30 💿</div>
+            <div id="garage-orb-count">8025 🔵</div>
+            <div>1850 💎</div>
+        </div>
+
+        <div style="position:absolute; left:3vh; top:18vh; display:flex; flex-direction:column; gap:2vh;">
+            <button class="gd-btn circle gray" onclick="cycleIconColor()">💧</button>
+            <button class="gd-btn circle orange" onclick="cycleIconColor()">🎨</button>
+        </div>
+
+        <div class="garage-preview-box">
+            <div id="preview-cube" style="width:11vh; height:11vh; background:#ff0077; border:4px solid #000; display:flex; align-items:center; justify-content:center;">
+                <div style="width:5.5vh; height:5.5vh; background:#ffee00; border:3px solid #000; border-radius:50%;"></div>
+            </div>
+        </div>
+
+        <div class="garage-mode-tabs">
+            <div class="mode-tab active">◼</div>
+            <div class="mode-tab">🚀</div>
+            <div class="mode-tab">⚙️</div>
+            <div class="mode-tab">🛸</div>
+            <div class="mode-tab">➤</div>
+            <div class="mode-tab">🤖</div>
+            <div class="mode-tab">🕷️</div>
+            <div class="mode-tab">🔄</div>
+            <div class="mode-tab">⭐</div>
+        </div>
+
+        <div style="font-size:2.2vh; text-shadow:var(--stroke-sm); margin-bottom:1vh;">Tap 🔒 for more info!</div>
+        <div class="garage-grid-box" id="garage-grid"></div>
+    </div>
+
+    <!-- ==========================================
+         4. THE SHOP (image_16)
+         ========================================== -->
+    <div id="screen-shop" class="screen">
+        <svg class="back-arrow" onclick="showScreen('screen-garage')" viewBox="0 0 100 100">
+            <polygon points="80,15 20,50 80,85" fill="#ff77cc" stroke="#000" stroke-width="8" stroke-linejoin="round"/>
+        </svg>
+
+        <div class="shop-top-sign">💰 THE SHOP</div>
+        <div class="shop-orbs-counter"><span id="shop-orbs-txt">8025</span> 🔵</div>
+
+        <div style="position:absolute; right:18vw; top:16vh; width:16vh; height:18vh; display:flex; flex-direction:column; align-items:center;">
+            <div style="width:13vh; height:6vh; background:#ff5566; border:4px solid #000; display:flex; justify-content:space-around; align-items:center;">
+                <div style="width:3.5vh; height:3.5vh; background:#fff; border:3px solid #000; border-radius:50%; display:flex; align-items:center; justify-content:center;"><div style="width:1.2vh; height:1.2vh; background:#000; border-radius:50%;"></div></div>
+                <div style="width:3.5vh; height:3.5vh; background:#fff; border:3px solid #000; border-radius:50%; display:flex; align-items:center; justify-content:center;"><div style="width:1.2vh; height:1.2vh; background:#000; border-radius:50%;"></div></div>
+            </div>
+            <div style="width:15vh; height:5vh; background:#ff5566; border:4px solid #000; margin-top:-4px;"></div>
+        </div>
+
+        <div class="shop-cabinet">
+            <div class="shop-shelf">
+                <div class="shop-product" onclick="buyShopItem(1000)">
+                    <div style="width:8vh; height:8vh; background:#44ffff; border:3px solid #000; border-radius:1vh; display:flex; align-items:center; justify-content:center; font-size:4.5vh;">👾</div>
+                    <div class="shop-price">1,000 🔵</div>
+                </div>
+                <div class="shop-product" onclick="buyShopItem(1500)">
+                    <div style="width:8vh; height:8vh; background:#554488; border:3px solid #000; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:4vh;">1</div>
+                    <div class="shop-price">1,500 🔵</div>
+                </div>
+                <div class="shop-product" onclick="buyShopItem(2000)">
+                    <div style="width:8vh; height:8vh; background:#ddeeff; border:3px solid #000; border-radius:1vh; display:flex; align-items:center; justify-content:center; font-size:4.5vh;">🤖</div>
+                    <div class="shop-price">2,000 🔵</div>
+                </div>
+                <div class="shop-product" onclick="buyShopItem(2500)">
+                    <div style="width:8vh; height:8vh; background:#aaddff; border:3px solid #000; border-radius:1vh; display:flex; align-items:center; justify-content:center; font-size:4.5vh;">🐘</div>
+                    <div class="shop-price">2,500 🔵</div>
+                </div>
+            </div>
+            <div class="shop-shelf" style="border-bottom:none;">
+                <div class="shop-product" onclick="buyShopItem(1000)">
+                    <div style="width:8vh; height:8vh; background:#33ccff; border:3px solid #000; border-radius:1vh; display:flex; align-items:center; justify-content:center; font-size:4.5vh;">❄️</div>
+                    <div class="shop-price">1,000 🔵</div>
+                </div>
+                <div class="shop-product" onclick="buyShopItem(1500)">
+                    <div style="width:8vh; height:8vh; background:#554488; border:3px solid #000; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:4vh;">2</div>
+                    <div class="shop-price">1,500 🔵</div>
+                </div>
+                <div class="shop-product" onclick="buyShopItem(2000)">
+                    <div style="width:8vh; height:8vh; background:#ffffff; border:3px solid #000; border-radius:1vh; display:flex; align-items:center; justify-content:center; font-size:4.5vh; color:#000;">➤</div>
+                    <div class="shop-price">2,000 🔵</div>
+                </div>
+                <div class="shop-product" onclick="buyShopItem(1500)">
+                    <div style="width:8vh; height:8vh; background:#22eeff; border:3px solid #000; border-radius:1vh; display:flex; align-items:center; justify-content:center; font-size:4.5vh;">🗡️</div>
+                    <div class="shop-price">1,500 🔵</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==========================================
+         5. SEARCH MENU (image_8, 9, 12)
+         ========================================== -->
+    <div id="screen-search" class="screen">
+        <svg class="back-arrow" onclick="showScreen('screen-creator')" viewBox="0 0 100 100">
+            <polygon points="80,15 20,50 80,85" fill="#77ff22" stroke="#000" stroke-width="8" stroke-linejoin="round"/>
+        </svg>
+
+        <div style="position:absolute; right:2.5vh; top:3vh; display:flex; flex-direction:column; gap:2vh; z-index:20;">
+            <button class="gd-btn circle" onclick="clearSearchFilters()">✖</button>
+            <button class="gd-btn circle" onclick="openModal('modal-advanced')">➕</button>
+            <button class="gd-btn circle" onclick="openModal('modal-demon-filter')">👹</button>
+        </div>
+
+        <div class="search-bar-container">
+            <input type="text" id="search-box-input" class="search-input" placeholder="ENTER A LEVEL, USER OR ID">
+            <button class="gd-btn" onclick="showScreen('screen-levels', 'ONLINE LEVELS')">🔍</button>
+            <button class="gd-btn" onclick="showScreen('screen-levels', 'USERS')">👥</button>
+            <button class="gd-btn gray" onclick="document.getElementById('search-box-input').value=''">✖</button>
+        </div>
+
+        <div style="font-size:2.6vh; text-shadow:var(--stroke-md);">QUICK SEARCH</div>
+        <div class="quick-search-box">
+            <button class="gd-btn" onclick="showScreen('screen-levels', 'MOST DOWNLOADED')">DOWNLOADS ⬇</button>
+            <button class="gd-btn" onclick="showScreen('screen-levels', 'MOST LIKED')">LIKES 👍</button>
+            <button class="gd-btn" onclick="showScreen('screen-levels', 'HYPED LEVELS')">HYPED 🔥</button>
+            <button class="gd-btn" onclick="showScreen('screen-levels', 'TRENDING')">TRENDING 📈</button>
+            <button class="gd-btn" onclick="showScreen('screen-levels', 'RECENT LEVELS')">RECENT 🕒</button>
+            <button class="gd-btn" onclick="showScreen('screen-levels', 'MAGIC LEVELS')">MAGIC ✨</button>
+            <button class="gd-btn" onclick="showScreen('screen-levels', 'AWARDED')">AWARDED ⭐</button>
+            <button class="gd-btn" onclick="showScreen('screen-levels', 'FOLLOWED')">FOLLOWED 👤</button>
+            <button class="gd-btn" onclick="showScreen('screen-levels', 'FRIENDS')">FRIENDS 👥</button>
+        </div>
+
+        <div style="font-size:2.6vh; text-shadow:var(--stroke-md);">FILTERS</div>
+        <div style="position:relative; display:flex; align-items:center;">
+            <div class="filters-bar">
+                <div class="filter-item" onclick="toggleDiffFilter(this, 'ALL')"><div id="f-na"></div><span>NA</span></div>
+                <div class="filter-item" onclick="toggleDiffFilter(this, 'EASY')"><div id="f-easy"></div><span>EASY</span></div>
+                <div class="filter-item" onclick="toggleDiffFilter(this, 'NORMAL')"><div id="f-norm"></div><span>NORMAL</span></div>
+                <div class="filter-item" onclick="toggleDiffFilter(this, 'HARD')"><div id="f-hard"></div><span>HARD</span></div>
+                <div class="filter-item" onclick="toggleDiffFilter(this, 'HARDER')"><div id="f-harder"></div><span>HARDER</span></div>
+                <div class="filter-item" onclick="toggleDiffFilter(this, 'INSANE')"><div id="f-insane"></div><span>INSANE</span></div>
+                <div class="filter-item selected" onclick="openModal('modal-demon-filter')"><div id="f-demon"></div><span id="demon-filter-label">DEMON</span></div>
+                <div class="filter-item" onclick="toggleDiffFilter(this, 'GRANDPA')"><div id="f-grandpa"></div><span>GRANDPA<br>DEMON</span></div>
+                <div class="filter-item" onclick="toggleDiffFilter(this, 'ANGER')"><div id="f-anger"></div><span>ANGER<br>DEMON</span></div>
+                <div class="filter-item" onclick="toggleDiffFilter(this, 'AUTO')"><div id="f-auto"></div><span>AUTO</span></div>
+            </div>
+            <button class="gd-btn cyan circle" style="width:5.5vh; height:5.5vh; margin-left:1.5vh; font-size:3vh;" onclick="openModal('modal-demon-filter')">➕</button>
+        </div>
+
+        <div class="length-bar">
+            <span>🕒</span>
+            <span class="len-opt active" onclick="this.classList.toggle('active')">TINY</span>
+            <span class="len-opt active" onclick="this.classList.toggle('active')">SHORT</span>
+            <span class="len-opt active" onclick="this.classList.toggle('active')">MEDIUM</span>
+            <span class="len-opt active" onclick="this.classList.toggle('active')">LONG</span>
+            <span class="len-opt active" onclick="this.classList.toggle('active')">XL</span>
+            <span class="len-opt active" onclick="this.classList.toggle('active')">PLAT.</span>
+            <span class="len-opt" onclick="this.classList.toggle('active')">⭐</span>
+        </div>
+    </div>
+
+    <!-- ==========================================
+         6. LEVELS / LISTS SCREEN (image_5, 10, 14, 17)
+         ========================================== -->
+    <div id="screen-levels" class="screen">
+        <svg class="back-arrow" onclick="showScreen('screen-creator')" viewBox="0 0 100 100">
+            <polygon points="80,15 20,50 80,85" fill="#77ff22" stroke="#000" stroke-width="8" stroke-linejoin="round"/>
+        </svg>
+
+        <div class="gd-frame">
+            <div class="gd-frame-top">
+                <div class="gd-frame-title" id="levels-header-title">ONLINE LEVELS</div>
+            </div>
+            <div class="gd-frame-body" id="levels-list-body"></div>
+            <div class="gd-frame-bot"></div>
+        </div>
+
+        <button class="gd-btn pink circle" style="position:absolute; bottom:2.5vh; right:2.5vh; width:10vh; height:10vh; font-size:2.4vh; z-index:30;" onclick="createNewEditorLevel()">NEW</button>
+    </div>
+
+    <!-- ==========================================
+         7. LEVEL INFO / EDIT / UPLOAD (image_20)
+         ========================================== -->
+    <div id="screen-level-info" class="screen">
+        <svg class="back-arrow" onclick="showScreen('screen-levels', 'ONLINE LEVELS')" viewBox="0 0 100 100">
+            <polygon points="80,15 20,50 80,85" fill="#77ff22" stroke="#000" stroke-width="8" stroke-linejoin="round"/>
+        </svg>
+
+        <div style="position:absolute; left:3vh; top:22vh; display:flex; flex-direction:column; gap:1.8vh;">
+            <button class="gd-btn circle" style="width:7vh; height:7vh;" onclick="openModal('modal-song-picker')">🎵</button>
+            <button class="gd-btn circle" style="width:7vh; height:7vh;" onclick="openModal('modal-upload-level')">📤</button>
+            <button class="gd-btn circle" style="width:7vh; height:7vh;" onclick="exportLevelCode()">📋</button>
+            <button class="gd-btn circle" style="width:7vh; height:7vh;" onclick="importLevelCode()">📥</button>
+            <button class="gd-btn circle" style="width:7vh; height:7vh;" onclick="openModal('modal-settings')">⚙️</button>
+        </div>
+
+        <div class="lvl-title-box" id="detail-lvl-title" onclick="openModal('modal-upload-level')">LEVEL NAME</div>
+        <div class="lvl-desc-box" id="detail-lvl-desc" onclick="openModal('modal-upload-level')">Description [Tap to Edit or Upload]</div>
+
+        <div id="detail-face-holder" style="height:9vh; display:flex; align-items:center; justify-content:center;"></div>
+
+        <div class="lvl-main-circles">
+            <div class="giant-circle-btn" onclick="showScreen('screen-editor')" title="Open Level Editor">🛠️</div>
+            <div class="giant-circle-btn" onclick="playSelectedLevel()" title="Play Level">▶</div>
+            <div class="giant-circle-btn" onclick="openModal('modal-upload-level')" title="Upload Level">📤</div>
+        </div>
+
+        <div style="display:flex; gap:5vh; font-size:2.6vh; text-shadow:var(--stroke-sm);">
+            <span>🕒 LONG</span>
+            <span id="detail-song-label" style="color:#ff77dd; cursor:pointer;" onclick="openModal('modal-song-picker')">🎵 STEREO MADNESS</span>
+            <span style="color:#44ddff;" id="detail-verified-badge">ℹ️ VERIFIED</span>
+        </div>
+    </div>
+
+    <!-- ==========================================
+         8. AUTHENTIC LEVEL EDITOR (image_1, 4)
+         ========================================== -->
+    <div id="screen-editor" class="screen">
+        <canvas id="editor-canvas"></canvas>
+
+        <!-- Top Editor Bar -->
+        <div class="editor-hud-top">
+            <div style="display:flex; gap:1vh; align-items:center;">
+                <button class="gd-btn circle" style="width:6.8vh; height:6.8vh;" onclick="undoEditorObj()">↩</button>
+                <button class="gd-btn circle" style="width:6.8vh; height:6.8vh;" onclick="redoEditorObj()">↪</button>
+                <button class="gd-btn circle gray" style="width:6.8vh; height:6.8vh;" onclick="deleteSelectedEditorObjs()">🗑️</button>
+                <button class="gd-btn circle" style="width:6.2vh; height:6.2vh; font-size:2vh;" onclick="togglePreviewColors()">👁️</button>
+                <input type="range" id="editor-scroll" min="0" max="6000" value="0" style="width:26vw;" oninput="drawEditorCanvas()">
+            </div>
+            <div style="display:flex; gap:1vh;">
+                <button class="gd-btn circle" style="width:6.8vh; height:6.8vh; font-size:1.6vh;" onclick="toggleGridOverlay()">GRID</button>
+                <button class="gd-btn circle" style="width:6.8vh; height:6.8vh;" onclick="openModal('modal-song-picker')">🔧</button>
+                <button class="gd-btn circle" style="width:6.8vh; height:6.8vh;" onclick="openModal('modal-settings')">⚙️</button>
+                <button class="gd-btn circle" style="width:6.8vh; height:6.8vh;" onclick="openModal('modal-editor-pause')">⏸</button>
+            </div>
+        </div>
+
+        <!-- Left Playtest & Zoom Controls -->
+        <div class="editor-left-dock">
+            <button class="gd-btn circle cyan" id="ed-music-btn" style="width:7.2vh; height:7.2vh;" onclick="toggleEditorMusicPreview()">🎵</button>
+            <button class="gd-btn circle orange" id="ed-playtest-btn" style="width:7.2vh; height:7.2vh;" onclick="toggleInEditorPlaytest()">▶</button>
+            <button class="gd-btn circle" style="width:6.2vh; height:6.2vh;" onclick="zoomEditor(1.15)">➕</button>
+            <button class="gd-btn circle" style="width:6.2vh; height:6.2vh;" onclick="zoomEditor(0.85)">➖</button>
+        </div>
+
+        <!-- Right 12-Button Action Pad -->
+        <div class="editor-right-pad">
+            <div class="ed-pad-btn" style="background:#8855aa;" onclick="copySelectedObjs()">COPY</div>
+            <div class="ed-pad-btn" style="background:#2288aa;" onclick="pasteCopiedObjs()">PASTE</div>
+            <div class="ed-pad-btn" style="background:#aa7733;" onclick="duplicateSelectedEditorObj()">COPY+<br>PASTE</div>
+            <div class="ed-pad-btn" style="background:#228866;" onclick="openEditTriggerModal()">EDIT<br>SPECIAL</div>
+            <div class="ed-pad-btn" style="background:#995555;" onclick="openModal('modal-edit-group')">EDIT<br>GROUP</div>
+            <div class="ed-pad-btn" style="background:#446699;" onclick="openEditTriggerModal()">EDIT<br>OBJECT</div>
+            <div class="ed-pad-btn" style="background:#885577;" onclick="copySelectedObjs()">COPY<br>VALUES</div>
+            <div class="ed-pad-btn" style="background:#338844;" onclick="pasteCopiedObjs()">PASTE<br>STATE</div>
+            <div class="ed-pad-btn" style="background:#447799;" onclick="openModal('modal-song-picker')">PASTE<br>COLOR</div>
+            <div class="ed-pad-btn" style="background:#555555;" onclick="openModal('modal-song-picker')">🎨</div>
+            <div class="ed-pad-btn" style="background:#666666;" onclick="cycleEditorLayer(1)">GO TO<br>LAYER</div>
+            <div class="ed-pad-btn" style="background:#337744;" onclick="deselectAllEditorObjs()">DE-<br>SELECT</div>
+        </div>
+
+        <!-- Layer Indicator Bar above Bottom Deck -->
+        <div class="editor-layer-bar">
+            <span style="color:#44ddff; cursor:pointer;" onclick="setEditorLayer(0)">◀◀</span>
+            <span style="color:#ff77cc; cursor:pointer;" onclick="cycleEditorLayer(-1)">◀</span>
+            <span id="ed-layer-num">0</span>
+            <span style="color:#ff77cc; cursor:pointer;" onclick="cycleEditorLayer(1)">▶</span>
+        </div>
+
+        <!-- Bottom Palette Bar -->
+        <div class="editor-bottom-bar">
+            <div class="editor-subtabs" id="ed-category-bar">
+                <div class="ed-subtab active" onclick="selectBuildCategory('blocks', this)">◼</div>
+                <div class="ed-subtab" onclick="selectBuildCategory('outlines', this)">⬜</div>
+                <div class="ed-subtab" onclick="selectBuildCategory('slopes', this)">📐</div>
+                <div class="ed-subtab" onclick="selectBuildCategory('spikes', this)">▲</div>
+                <div class="ed-subtab" onclick="selectBuildCategory('orbs', this)">🟡</div>
+                <div class="ed-subtab" onclick="selectBuildCategory('pads', this)">🛸</div>
+                <div class="ed-subtab" onclick="selectBuildCategory('saws', this)">⚙️</div>
+                <div class="ed-subtab" onclick="selectBuildCategory('triggers', this)" style="color:#ffdd44;">COL/M</div>
+            </div>
+            <div class="editor-lower-deck">
+                <div class="ed-mode-grid">
+                    <button class="gd-btn cyan" id="tab-btn-build" style="font-size:1.75vh;" onclick="switchEditorDeck('build')">BUILD</button>
+                    <button class="gd-btn gray" id="tab-btn-edit" style="font-size:1.75vh;" onclick="switchEditorDeck('edit')">EDIT</button>
+                    <button class="gd-btn gray" id="tab-btn-delete" style="font-size:1.75vh;" onclick="switchEditorDeck('delete')">DELETE</button>
+                    <button class="gd-btn gray" id="tab-btn-view" style="font-size:1.75vh;" onclick="switchEditorDeck('view')">VIEW</button>
+                </div>
+
+                <div class="ed-palette-grid" id="editor-palette-container"></div>
+
+                <div class="ed-mode-grid">
+                    <button class="gd-btn gray" id="toggle-btn-swipe" style="font-size:1.65vh;" onclick="toggleEditorFlag('swipe')">SWIPE</button>
+                    <button class="gd-btn" style="font-size:1.65vh;" onclick="rotateSelectedEditorObjs(90)">ROTATE</button>
+                    <button class="gd-btn gray" id="toggle-btn-freemove" style="font-size:1.65vh;" onclick="toggleEditorFlag('freeMove')">FREE<br>MOVE</button>
+                    <button class="gd-btn" id="toggle-btn-snap" style="font-size:1.65vh;" onclick="toggleEditorFlag('snap')">SNAP</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==========================================
+         9. PLAYABLE GAME SCREEN
+         ========================================== -->
+    <div id="screen-play" class="screen" style="background:#000;">
+        <canvas id="play-canvas" style="width:100vw; height:100vh; display:block;"></canvas>
+
+        <div style="position:absolute; top:2vh; left:20vw; width:60vw; height:2.8vh; background:rgba(0,0,0,0.6); border:2px solid #fff; border-radius:1.4vh; overflow:hidden; z-index:20;">
+            <div id="play-prog-bar" style="width:0%; height:100%; background:#66ff22;"></div>
+        </div>
+        <div id="play-pct-txt" style="position:absolute; top:1.8vh; right:14vw; font-size:2.6vh; text-shadow:var(--stroke-sm); z-index:20;">0%</div>
+        <button class="gd-btn circle" style="position:absolute; top:2vh; right:2.5vh; width:7.5vh; height:7.5vh; z-index:20;" onclick="stopPlayableLevel()">⏸</button>
+    </div>
+
+    <!-- ==========================================
+         MODALS
+         ========================================== -->
+
+    <!-- EDIT MOVE TRIGGER / OBJECT MODAL -->
+    <div id="modal-edit-move" class="modal-overlay">
+        <div class="modal-card" style="width:72vw; height:74vh; background:#253348; justify-content:space-between;">
+            <div class="modal-close-x" onclick="closeModal('modal-edit-move')">✖</div>
+            <div style="font-size:4.2vh; color:#44eeff; text-shadow:var(--stroke-md); text-align:center;">EDIT MOVE TRIGGER</div>
+
+            <div style="display:flex; flex-direction:column; gap:1.8vh; padding:0 2vh;">
+                <div class="trigger-row">
+                    <span>TARGET GROUP ID</span>
+                    <div style="display:flex; gap:1.2vh; align-items:center;">
+                        <button class="gd-btn pink" onclick="adjustMoveParam('targetGroup', -1)">◀</button>
+                        <div class="num-Display" id="mv-target-val">1</div>
+                        <button class="gd-btn pink" onclick="adjustMoveParam('targetGroup', 1)">▶</button>
+                    </div>
+                </div>
+
+                <div class="trigger-row">
+                    <span>MOVE X <small style="color:var(--gd-gold);">(10 = 1 BLOCK)</small></span>
+                    <div style="display:flex; gap:1vh; align-items:center;">
+                        <button class="gd-btn cyan" onclick="adjustMoveParam('moveX', -10)">-10</button>
+                        <button class="gd-btn gray" onclick="adjustMoveParam('moveX', -1)">-1</button>
+                        <div class="num-Display" id="mv-x-val">0</div>
+                        <button class="gd-btn gray" onclick="adjustMoveParam('moveX', 1)">+1</button>
+                        <button class="gd-btn cyan" onclick="adjustMoveParam('moveX', 10)">+10</button>
+                    </div>
+                </div>
+
+                <div class="trigger-row">
+                    <span>MOVE Y <small style="color:var(--gd-gold);">(10 = 1 BLOCK UP)</small></span>
+                    <div style="display:flex; gap:1vh; align-items:center;">
+                        <button class="gd-btn cyan" onclick="adjustMoveParam('moveY', -10)">-10</button>
+                        <button class="gd-btn gray" onclick="adjustMoveParam('moveY', -1)">-1</button>
+                        <div class="num-Display" id="mv-y-val">20</div>
+                        <button class="gd-btn gray" onclick="adjustMoveParam('moveY', 1)">+1</button>
+                        <button class="gd-btn cyan" onclick="adjustMoveParam('moveY', 10)">+10</button>
+                    </div>
+                </div>
+
+                <div class="trigger-row">
+                    <span>MOVE TIME (SECONDS)</span>
+                    <div style="display:flex; gap:1vh; align-items:center;">
+                        <button class="gd-btn orange" onclick="adjustMoveParam('duration', -0.25)">-0.25s</button>
+                        <div class="num-Display" id="mv-dur-val">0.50s</div>
+                        <button class="gd-btn orange" onclick="adjustMoveParam('duration', 0.25)">+0.25s</button>
+                    </div>
+                </div>
+            </div>
+
+            <div style="display:flex; justify-content:center;">
+                <button class="gd-btn" style="font-size:3.2vh; padding:1.2vh 5vh;" onclick="closeModal('modal-edit-move'); drawEditorCanvas();">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- EDIT GROUP ID MODAL -->
+    <div id="modal-edit-group" class="modal-overlay">
+        <div class="modal-card" style="width:60vw; height:52vh; background:#4a2c2a; justify-content:space-between; align-items:center;">
+            <div class="modal-close-x" onclick="closeModal('modal-edit-group')">✖</div>
+            <div style="font-size:4.2vh; color:var(--gd-gold); text-shadow:var(--stroke-md);">EDIT GROUP ID</div>
+            <div style="font-size:2.2vh; text-align:center;">Assign a Group ID so Move Triggers can animate the selected object(s).</div>
+            <div style="display:flex; align-items:center; gap:2vh;">
+                <button class="gd-btn pink" style="font-size:3.5vh;" onclick="changeSelectedGroupId(-1)">◀</button>
+                <div class="num-Display" id="edit-group-val" style="font-size:4vh; min-width:14vh;">1</div>
+                <button class="gd-btn pink" style="font-size:3.5vh;" onclick="changeSelectedGroupId(1)">▶</button>
+            </div>
+            <div style="display:flex; gap:2vh;">
+                <button class="gd-btn cyan" onclick="setNextFreeGroup()">NEXT FREE</button>
+                <button class="gd-btn" onclick="closeModal('modal-edit-group'); drawEditorCanvas();">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- UPLOAD / PUBLISH LEVEL MODAL -->
+    <div id="modal-upload-level" class="modal-overlay">
+        <div class="modal-card" style="width:78vw; height:84vh; justify-content:space-between;">
+            <div class="modal-close-x" onclick="closeModal('modal-upload-level')">✖</div>
+            <div style="font-size:4.4vh; color:var(--gd-gold); text-shadow:var(--stroke-md); text-align:center;">UPLOAD / PUBLISH LEVEL</div>
+
+            <div style="display:flex; flex-direction:column; gap:1.8vh; padding:0 2vh;">
+                <div style="display:flex; flex-direction:column; gap:0.6vh;">
+                    <span style="font-size:2.2vh;">LEVEL NAME:</span>
+                    <input type="text" id="upload-title-inp" class="gd-text-input" value="MY CUSTOM LEVEL" maxlength="26">
+                </div>
+                <div style="display:flex; flex-direction:column; gap:0.6vh;">
+                    <span style="font-size:2.2vh;">DESCRIPTION:</span>
+                    <input type="text" id="upload-desc-inp" class="gd-text-input" value="Built in GD Web Editor with Move Triggers!" maxlength="80">
+                </div>
+                <div style="display:flex; justify-content:space-between; align-items:center; gap:2vh;">
+                    <div style="flex:1;">
+                        <span style="font-size:2.2vh;">SELECT SONG:</span>
+                        <select id="upload-song-sel" class="gd-text-input" style="width:100%; margin-top:0.5vh;">
+                            <option value="STEREO MADNESS">Stereo Madness</option>
+                            <option value="CRIM3S - LOST">Crim3s - Lost</option>
+                            <option value="KZX - STALEMATE">Kzx - STALEMATE</option>
+                        </select>
+                    </div>
+                    <div style="flex:1;">
+                        <span style="font-size:2.2vh;">DIFFICULTY RATING:</span>
+                        <select id="upload-diff-sel" class="gd-text-input" style="width:100%; margin-top:0.5vh;">
+                            <option value="NORMAL">NORMAL</option>
+                            <option value="HARD">HARD</option>
+                            <option value="INSANE">INSANE</option>
+                            <option value="EXTREME DEMON">EXTREME DEMON</option>
+                            <option value="GRANDPA DEMON">GRANDPA DEMON</option>
+                            <option value="ANGER DEMON">ANGER DEMON</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div style="display:flex; justify-content:center; gap:3vh;">
+                <button class="gd-btn cyan" style="font-size:2.8vh;" onclick="exportLevelCode()">COPY CODE 📋</button>
+                <button class="gd-btn" style="font-size:3.2vh; padding:1.4vh 4vh;" onclick="publishCustomLevel()">UPLOAD TO SERVERS 📤</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- SONG & LEVEL SETTINGS MODAL -->
+    <div id="modal-song-picker" class="modal-overlay">
+        <div class="modal-card" style="width:74vw; height:76vh; justify-content:space-between;">
+            <div class="modal-close-x" onclick="closeModal('modal-song-picker')">✖</div>
+            <div style="font-size:4.2vh; color:var(--gd-gold); text-shadow:var(--stroke-md); text-align:center;">LEVEL SONG & COLORS</div>
+
+            <div style="display:flex; flex-direction:column; gap:1.6vh;">
+                <div class="trigger-row">
+                    <span>🎵 STEREO MADNESS</span>
+                    <div style="display:flex; gap:1.2vh;">
+                        <button class="gd-btn cyan" onclick="previewSongTrack('STEREO MADNESS')">TEST ▶</button>
+                        <button class="gd-btn" onclick="selectEditorSong('STEREO MADNESS')">USE</button>
+                    </div>
+                </div>
+                <div class="trigger-row">
+                    <span>🎵 CRIM3S - LOST</span>
+                    <div style="display:flex; gap:1.2vh;">
+                        <button class="gd-btn cyan" onclick="previewSongTrack('CRIM3S - LOST')">TEST ▶</button>
+                        <button class="gd-btn" onclick="selectEditorSong('CRIM3S - LOST')">USE</button>
+                    </div>
+                </div>
+                <div class="trigger-row">
+                    <span>🎵 KZX - STALEMATE</span>
+                    <div style="display:flex; gap:1.2vh;">
+                        <button class="gd-btn cyan" onclick="previewSongTrack('KZX - STALEMATE')">TEST ▶</button>
+                        <button class="gd-btn" onclick="selectEditorSong('KZX - STALEMATE')">USE</button>
+                    </div>
+                </div>
+                <div class="trigger-row">
+                    <span>🎨 BACKGROUND COLOR</span>
+                    <div style="display:flex; gap:1.2vh;">
+                        <input type="color" id="ed-bg-picker" value="#0055cc" style="width:8vh; height:5vh; border:none; cursor:pointer;" onchange="updateEditorBgColor(this.value)">
+                        <button class="gd-btn red" onclick="stopAllAudio()">STOP MUSIC ⏹</button>
+                    </div>
+                </div>
+            </div>
+
+            <div style="display:flex; justify-content:center;">
+                <button class="gd-btn" style="font-size:3vh; padding:1.2vh 5vh;" onclick="closeModal('modal-song-picker')">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- DEMON FILTER MODAL (image_8) -->
+    <div id="modal-demon-filter" class="modal-overlay">
+        <div class="modal-card" style="height:64vh; width:78vw; justify-content:space-between; align-items:center;">
+            <div style="font-size:5vh; text-shadow:var(--stroke-lg);">DEMON FILTER</div>
+            <div style="display:flex; justify-content:space-around; width:100%; align-items:center; flex-wrap:wrap; gap:1.5vh;">
+                <div class="filter-item selected" onclick="pickDemonFilter('ALL DEMONS')"><div id="df-all"></div><span>DEMON</span></div>
+                <div class="filter-item" onclick="pickDemonFilter('EASY DEMON')"><div id="df-easy"></div><span>EASY<br>DEMON</span></div>
+                <div class="filter-item" onclick="pickDemonFilter('MEDIUM DEMON')"><div id="df-med"></div><span>MEDIUM<br>DEMON</span></div>
+                <div class="filter-item" onclick="pickDemonFilter('HARD DEMON')"><div id="df-hard"></div><span>HARD<br>DEMON</span></div>
+                <div class="filter-item" onclick="pickDemonFilter('INSANE DEMON')"><div id="df-ins"></div><span>INSANE<br>DEMON</span></div>
+                <div class="filter-item" onclick="pickDemonFilter('EXTREME DEMON')"><div id="df-ext"></div><span>EXTREME<br>DEMON</span></div>
+                <div class="filter-item" onclick="pickDemonFilter('GRANDPA DEMON')"><div id="df-grandpa"></div><span style="color:#77ff77;">GRANDPA<br>DEMON</span></div>
+                <div class="filter-item" onclick="pickDemonFilter('ANGER DEMON')"><div id="df-anger"></div><span style="color:#cc77ff;">ANGER<br>DEMON</span></div>
+            </div>
+            <button class="gd-btn" style="font-size:3.5vh; padding:1.5vh 5vh;" onclick="closeModal('modal-demon-filter')">OK</button>
+        </div>
+    </div>
+
+    <!-- ADVANCED OPTIONS MODAL (image_7) -->
+    <div id="modal-advanced" class="modal-overlay">
+        <div class="modal-card">
+            <div class="modal-close-x" onclick="closeModal('modal-advanced')">✖</div>
+            <div style="font-size:4.5vh; color:var(--gd-gold); text-shadow:var(--stroke-md); text-align:center; margin-bottom:4vh;">ADVANCED OPTIONS</div>
+            <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:3.5vh; padding:0 3vh;">
+                <div class="chk-row" onclick="toggleCheck(this)"><div class="chk-box"></div>UNCOMPLETED</div>
+                <div class="chk-row" onclick="toggleCheck(this)"><div class="chk-box"></div>COMPLETED</div>
+                <div class="chk-row" onclick="toggleCheck(this)"><div class="chk-box"></div>ORIGINAL</div>
+                <div class="chk-row" onclick="toggleCheck(this)"><div class="chk-box"></div>COINS</div>
+                <div class="chk-row" onclick="toggleCheck(this)"><div class="chk-box"></div>2-PLAYER</div>
+                <div class="chk-row" onclick="toggleCheck(this)"><div class="chk-box"></div>SONG</div>
+                <div class="chk-row" onclick="toggleCheck(this)"><div class="chk-box"></div>NO STAR</div>
+                <div class="chk-row" onclick="toggleCheck(this)"><div class="chk-box"></div>FEATURED</div>
+                <div class="chk-row" onclick="toggleCheck(this)"><div class="chk-box"></div>EPIC</div>
+                <div class="chk-row" onclick="toggleCheck(this)"><div class="chk-box"></div>LEGENDARY</div>
+                <div class="chk-row" onclick="toggleCheck(this)"><div class="chk-box"></div>MYTHIC</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- PROFILE MODAL (image_13) -->
+    <div id="modal-profile" class="modal-overlay">
+        <div class="modal-card" style="align-items:center; justify-content:space-between;">
+            <div class="modal-close-x" onclick="closeModal('modal-profile')">✖</div>
+            <div style="font-size:4.5vh; text-shadow:var(--stroke-md);">YASSINPLAYZ245</div>
+            <div style="display:flex; gap:3.5vh; font-size:3vh; text-shadow:var(--stroke-sm);">
+                <span>266 ⭐</span><span>125 🌙</span><span>47 🪙</span><span>30 💿</span><span>14 👹</span><span>1 👤</span>
+            </div>
+            <div style="width:90%; background:rgba(0,0,0,0.28); border-radius:1.5vh; padding:1.8vh; display:flex; justify-content:space-around; font-size:4.5vh;">
+                <span>◼</span><span>🚀</span><span>⚙️</span><span>🛸</span><span>➤</span><span>🤖</span><span>🕷️</span><span>🔄</span>
+            </div>
+            <div style="width:90%; height:24vh; background:rgba(0,0,0,0.28); border-radius:1.5vh; padding:2vh; display:flex; flex-direction:column; justify-content:space-between;">
+                <div style="color:var(--gd-gold); font-size:2.6vh; text-shadow:var(--stroke-sm);">YASSINPLAYZ245</div>
+                <div style="font-family:sans-serif; font-size:2.8vh;">twin 🥺✌️</div>
+                <div style="text-align:right; font-family:sans-serif; font-size:1.8vh; color:#ccc;">Just now</div>
+            </div>
+            <div style="display:flex; gap:2.5vh;">
+                <button class="gd-btn cyan">✉️</button>
+                <button class="gd-btn cyan">👥</button>
+                <button class="gd-btn cyan">👤+</button>
+                <button class="gd-btn cyan">🔔</button>
+                <button class="gd-btn gray" onclick="openModal('modal-settings')">⚙️</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- NEWS MODAL (image_11) -->
+    <div id="modal-news" class="modal-overlay">
+        <div class="modal-card">
+            <div class="modal-close-x" onclick="closeModal('modal-news')">✖</div>
+            <div style="font-size:4.5vh; color:var(--gd-gold); text-shadow:var(--stroke-md); text-align:center; margin-bottom:2vh;">NEWS</div>
+            <div style="flex:1; background:rgba(0,0,0,0.3); border-radius:1.5vh; padding:3vh; overflow-y:auto;">
+                <div style="color:var(--gd-gold); font-size:2.2vh; text-shadow:var(--stroke-sm);">NEW UPDATE</div>
+                <div style="font-size:4vh; text-shadow:var(--stroke-md); margin:1vh 0;">MOVE TRIGGERS, MUSIC & LEVEL UPLOADS!</div>
+                <p style="font-family:sans-serif; font-size:2.4vh; line-height:1.45; margin-bottom:2vh;">
+                    Stream Crim3s - Lost, Kzx - STALEMATE, and Stereo Madness! Build levels with Group IDs and Move Triggers, then hit Upload to publish them to Online Levels!
+                </p>
+                <div style="background:#001a44; border:3px solid #000; border-radius:1vh; padding:2.5vh; text-align:center;">
+                    <div style="font-family: 'Oxygene 1 V1'; font-size:4vh; color:#77ff22; text-shadow:var(--stroke-md);">GEOMETRY DASH</div>
+                    <div style="font-size:2.4vh; color:var(--gd-gold); margin-top:0.5vh;">TRY ME!</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- EDITOR PAUSE MODAL (image_2) -->
+    <div id="modal-editor-pause" class="modal-overlay">
+        <div style="position:absolute; top:2vh; left:2.5vh; font-size:2.6vh; color:var(--gd-gold); text-shadow:var(--stroke-sm);">
+            OBJECTS: <span id="pause-obj-count">0</span>/40000<br>LENGTH: CUSTOM
+        </div>
+
+        <div style="display:flex; flex-direction:column; gap:1.8vh; width:46vw;">
+            <button class="gd-btn" style="font-size:3.3vh; padding:1.6vh;" onclick="closeModal('modal-editor-pause')">RESUME</button>
+            <button class="gd-btn" style="font-size:3.3vh; padding:1.6vh;" onclick="closeModal('modal-editor-pause'); playtestEditorLevel();">SAVE AND PLAY</button>
+            <button class="gd-btn" style="font-size:3.3vh; padding:1.6vh;" onclick="saveEditorToCurrentLevel(); closeModal('modal-editor-pause'); showScreen('screen-level-info');">SAVE AND EXIT</button>
+            <button class="gd-btn" style="font-size:3.3vh; padding:1.6vh;" onclick="saveEditorToCurrentLevel(); openModal('modal-upload-level');">SAVE & UPLOAD 📤</button>
+            <button class="gd-btn" style="font-size:3.3vh; padding:1.6vh;" onclick="closeModal('modal-editor-pause'); showScreen('screen-level-info');">EXIT</button>
+        </div>
+
+        <div style="position:absolute; right:2.5vh; top:3vh; display:flex; flex-direction:column; gap:1.4vh; width:20vw;">
+            <button class="gd-btn gray" style="font-size:2vh; justify-content:space-between;" onclick="openModal('modal-settings')">SETTINGS ⚙️</button>
+            <button class="gd-btn gray" style="font-size:2vh; justify-content:space-between;" onclick="exportLevelCode()">EXPORT 📤</button>
+            <button class="gd-btn gray" style="font-size:2vh; justify-content:space-between;" onclick="importLevelCode()">IMPORT 📥</button>
+            <button class="gd-btn gray" style="font-size:2vh; justify-content:space-between;" onclick="saveEditorToCurrentLevel()">AUTO-SAVE 💾</button>
+            <button class="gd-btn gray" style="font-size:2vh; justify-content:space-between;" onclick="openModal('modal-song-picker')">GET AUDIO 🎵</button>
+        </div>
+    </div>
+
+    <!-- EDITOR SETTINGS MODAL (image_3) -->
+    <div id="modal-settings" class="modal-overlay">
+        <div class="modal-card" style="background:#3e4552;">
+            <div class="modal-close-x" onclick="closeModal('modal-settings')">✖</div>
+            <div style="display:flex; justify-content:center; gap:1.5vh; margin-bottom:3.5vh;">
+                <button class="gd-btn gray" style="font-size:2vh;">GAMEPLAY</button>
+                <button class="gd-btn gray" style="font-size:2vh;">VISUAL</button>
+                <button class="gd-btn gray" style="font-size:2vh;">PRACTICE</button>
+                <button class="gd-btn cyan" style="font-size:2vh;">EDITOR</button>
+                <button class="gd-btn gray" style="font-size:2vh;">AUDIO</button>
+                <button class="gd-btn gray" style="font-size:2vh;">OTHER</button>
+            </div>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:2.5vh; padding:0 4vh;">
+                <div class="chk-row" onclick="toggleCheck(this)"><div class="chk-box">✔</div>DRAW TRIGGER BOXES</div>
+                <div class="chk-row" onclick="toggleCheck(this)"><div class="chk-box">✔</div>PLAYTEST NO UI</div>
+                <div class="chk-row" onclick="toggleCheck(this)"><div class="chk-box">✔</div>PLAYTEST MUSIC</div>
+                <div class="chk-row" onclick="toggleCheck(this)"><div class="chk-box">✔</div>EFFECT LINES</div>
+                <div class="chk-row" onclick="toggleCheck(this)"><div class="chk-box">✔</div>DURATION LINES</div>
+                <div class="chk-row" onclick="toggleCheck(this)"><div class="chk-box">✔</div>GRID ON TOP</div>
+                <div class="chk-row" onclick="toggleCheck(this)"><div class="chk-box"></div>PLAYTEST NO GRID</div>
+                <div class="chk-row" onclick="toggleCheck(this)"><div class="chk-box"></div>HIDE BACKGROUND</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    /* ==========================================================================
+       1. CUSTOM GITHUB MUSIC STREAMING ENGINE
+       ========================================================================== */
+    const SONG_TRACKS = {
+        'STEREO MADNESS': {
+            cdn: 'https://cdn.jsdelivr.net/gh/yassinnice/newground-music-gd@main/Stereo%20Madness.mp3',
+            raw: 'https://raw.githubusercontent.com/yassinnice/newground-music-gd/main/Stereo%20Madness.mp3'
+        },
+        'CRIM3S - LOST': {
+            cdn: 'https://cdn.jsdelivr.net/gh/yassinnice/newground-music-gd@main/CRIM3S%20-%20LOST.mp3',
+            raw: 'https://raw.githubusercontent.com/yassinnice/newground-music-gd/main/CRIM3S%20-%20LOST.mp3'
+        },
+        'KZX - STALEMATE': {
+            cdn: 'https://cdn.jsdelivr.net/gh/yassinnice/newground-music-gd@main/Kzx%20-%20STALEMATE.mp3',
+            raw: 'https://raw.githubusercontent.com/yassinnice/newground-music-gd/main/Kzx%20-%20STALEMATE.mp3'
+        }
+    };
+
+    const audioPlayer = new Audio();
+    audioPlayer.crossOrigin = 'anonymous';
+    let currentLoadedSongName = '';
+
+    function playSongTrack(songName, startTimeSec = 0) {
+        const track = SONG_TRACKS[songName] || SONG_TRACKS['STEREO MADNESS'];
+        if (currentLoadedSongName !== songName) {
+            currentLoadedSongName = songName;
+            audioPlayer.src = track.cdn;
+            audioPlayer.onerror = () => {
+                if (audioPlayer.src !== track.raw) {
+                    audioPlayer.src = track.raw;
+                    audioPlayer.play().catch(() => {});
+                }
+            };
+        }
+        try {
+            audioPlayer.currentTime = Math.max(0, startTimeSec);
+        } catch (e) {}
+        audioPlayer.play().catch(() => {});
+    }
+
+    function stopAllAudio() {
+        audioPlayer.pause();
+    }
+
+    function previewSongTrack(songName) {
+        playSongTrack(songName, 0);
+    }
+
+    function selectEditorSong(songName) {
+        selectedLevel.song = songName;
+        document.getElementById('detail-song-label').innerText = '🎵 ' + songName;
+        document.getElementById('upload-song-sel').value = songName;
+        playSongTrack(songName, 0);
+    }
+
+    /* ==========================================================================
+       2. CUSTOM DEMON & DIFFICULTY SVG GENERATOR
+       ========================================================================== */
+    function getDifficultySVG(type, size = '7vh') {
+        if (type === 'GRANDPA' || type === 'GRANDPA DEMON') {
+            return `<svg viewBox="0 0 120 120" style="width:${size}; height:${size}; overflow:visible; filter:drop-shadow(0 2px 3px #000);">
+                <defs>
+                    <radialGradient id="gpGrad" cx="50%" cy="45%" r="50%">
+                        <stop offset="0%" stop-color="#3b884c"/>
+                        <stop offset="70%" stop-color="#285c36"/>
+                        <stop offset="100%" stop-color="#5a2d7a"/>
+                    </radialGradient>
+                </defs>
+                <path d="M22,55 Q4,30 12,6 Q22,25 32,38 Z" fill="#fff" stroke="#000" stroke-width="4"/>
+                <path d="M98,55 Q116,30 108,6 Q98,25 88,38 Z" fill="#fff" stroke="#000" stroke-width="4"/>
+                <path d="M18,75 Q2,68 4,50 Q14,58 24,62 Z" fill="#fff" stroke="#000" stroke-width="4"/>
+                <path d="M102,75 Q118,68 116,50 Q106,58 96,62 Z" fill="#fff" stroke="#000" stroke-width="4"/>
+                <path d="M24,92 Q10,92 10,80 Q18,82 28,84 Z" fill="#fff" stroke="#000" stroke-width="4"/>
+                <path d="M96,92 Q110,92 110,80 Q102,82 92,84 Z" fill="#fff" stroke="#000" stroke-width="4"/>
+                <circle cx="60" cy="64" r="42" fill="url(#gpGrad)" stroke="#000" stroke-width="5"/>
+                <path d="M50,42 Q60,2 60,2 Q60,2 70,42 Q60,48 50,42 Z" fill="#fff" stroke="#000" stroke-width="4"/>
+                <polygon points="26,44 54,60 28,60" fill="#ffee00" stroke="#000" stroke-width="3.5"/>
+                <polygon points="94,44 66,60 92,60" fill="#ffee00" stroke="#000" stroke-width="3.5"/>
+                <path d="M26,74 Q60,64 94,74 Q98,96 86,98 Q60,90 34,98 Q22,96 26,74 Z" fill="#000" stroke="#000" stroke-width="3"/>
+                <rect x="32" y="71" width="11" height="9" rx="3" fill="#fff" stroke="#000" stroke-width="2"/>
+                <rect x="45" y="70" width="13" height="10" rx="3" fill="#fff" stroke="#000" stroke-width="2"/>
+                <rect x="60" y="70" width="13" height="10" rx="3" fill="#fff" stroke="#000" stroke-width="2"/>
+                <rect x="75" y="71" width="11" height="9" rx="3" fill="#fff" stroke="#000" stroke-width="2"/>
+                <rect x="34" y="88" width="11" height="8" rx="3" fill="#fff" stroke="#000" stroke-width="2"/>
+                <rect x="47" y="88" width="12" height="8" rx="3" fill="#fff" stroke="#000" stroke-width="2"/>
+                <rect x="61" y="88" width="12" height="8" rx="3" fill="#fff" stroke="#000" stroke-width="2"/>
+                <rect x="75" y="88" width="11" height="8" rx="3" fill="#fff" stroke="#000" stroke-width="2"/>
+            </svg>`;
+        }
+        if (type === 'ANGER' || type === 'ANGER DEMON') {
+            return `<svg viewBox="0 0 120 120" style="width:${size}; height:${size}; overflow:visible; filter:drop-shadow(0 2px 3px #000);">
+                <defs>
+                    <radialGradient id="angGrad" cx="50%" cy="45%" r="50%">
+                        <stop offset="0%" stop-color="#6a22cc"/>
+                        <stop offset="100%" stop-color="#340a6b"/>
+                    </radialGradient>
+                </defs>
+                <path d="M22,55 Q4,30 12,6 Q22,25 32,38 Z" fill="#f3ebd3" stroke="#000" stroke-width="4"/>
+                <path d="M98,55 Q116,30 108,6 Q98,25 88,38 Z" fill="#f3ebd3" stroke="#000" stroke-width="4"/>
+                <path d="M18,75 Q2,68 4,50 Q14,58 24,62 Z" fill="#f3ebd3" stroke="#000" stroke-width="4"/>
+                <path d="M102,75 Q118,68 116,50 Q106,58 96,62 Z" fill="#f3ebd3" stroke="#000" stroke-width="4"/>
+                <path d="M24,92 Q10,92 10,80 Q18,82 28,84 Z" fill="#f3ebd3" stroke="#000" stroke-width="4"/>
+                <path d="M96,92 Q110,92 110,80 Q102,82 92,84 Z" fill="#f3ebd3" stroke="#000" stroke-width="4"/>
+                <circle cx="60" cy="64" r="42" fill="url(#angGrad)" stroke="#000" stroke-width="5"/>
+                <path d="M50,42 Q60,2 60,2 Q60,2 70,42 Q60,48 50,42 Z" fill="#f3ebd3" stroke="#000" stroke-width="4"/>
+                <polygon points="26,44 54,60 28,60" fill="#ffee00" stroke="#000" stroke-width="3.5"/>
+                <polygon points="94,44 66,60 92,60" fill="#ffee00" stroke="#000" stroke-width="3.5"/>
+                <path d="M26,74 Q60,62 94,74 Q98,96 86,98 Q60,90 34,98 Q22,96 26,74 Z" fill="#3a0007" stroke="#000" stroke-width="3.5"/>
+                <polygon points="30,72 38,88 44,71" fill="#f3ebd3" stroke="#000" stroke-width="2"/>
+                <polygon points="44,71 52,85 58,70" fill="#f3ebd3" stroke="#000" stroke-width="2"/>
+                <polygon points="62,70 68,85 76,71" fill="#f3ebd3" stroke="#000" stroke-width="2"/>
+                <polygon points="76,71 82,88 90,72" fill="#f3ebd3" stroke="#000" stroke-width="2"/>
+                <polygon points="35,96 42,83 48,95" fill="#f3ebd3" stroke="#000" stroke-width="2"/>
+                <polygon points="50,95 60,82 70,95" fill="#f3ebd3" stroke="#000" stroke-width="2"/>
+                <polygon points="72,95 78,83 85,96" fill="#f3ebd3" stroke="#000" stroke-width="2"/>
+            </svg>`;
+        }
+
+        const colors = {
+            'ALL': '#777', 'EASY': '#33bbff', 'NORMAL': '#44ee22', 'HARD': '#ffbb11',
+            'HARDER': '#ff4422', 'INSANE': '#ee33cc', 'AUTO': '#ffbb55',
+            'EASY DEMON': '#9944ff', 'MEDIUM DEMON': '#cc33aa', 'HARD DEMON': '#ff2222',
+            'INSANE DEMON': '#ff1100', 'EXTREME DEMON': '#aa0000', 'ALL DEMONS': '#dd1111'
+        };
+        const col = colors[type] || '#dd1111';
+        const isDemon = type.includes('DEMON');
+
+        return `<svg viewBox="0 0 100 100" style="width:${size}; height:${size}; overflow:visible; filter:drop-shadow(0 2px 2px #000);">
+            ${isDemon ? `<polygon points="15,35 5,8 32,22" fill="#fff" stroke="#000" stroke-width="4"/><polygon points="85,35 95,8 68,22" fill="#fff" stroke="#000" stroke-width="4"/>` : ''}
+            <circle cx="50" cy="54" r="38" fill="${col}" stroke="#000" stroke-width="5"/>
+            <circle cx="36" cy="44" r="6" fill="${isDemon ? '#55ff00' : '#000'}"/>
+            <circle cx="64" cy="44" r="6" fill="${isDemon ? '#55ff00' : '#000'}"/>
+            <path d="${isDemon ? 'M28,68 Q50,82 72,68' : 'M32,68 Q50,76 68,68'}" stroke="#000" stroke-width="5" fill="none" stroke-linecap="round"/>
+        </svg>`;
+    }
+
+    function initFilterFaces() {
+        document.getElementById('f-na').innerHTML = getDifficultySVG('ALL', '5.6vh');
+        document.getElementById('f-easy').innerHTML = getDifficultySVG('EASY', '5.6vh');
+        document.getElementById('f-norm').innerHTML = getDifficultySVG('NORMAL', '5.6vh');
+        document.getElementById('f-hard').innerHTML = getDifficultySVG('HARD', '5.6vh');
+        document.getElementById('f-harder').innerHTML = getDifficultySVG('HARDER', '5.6vh');
+        document.getElementById('f-insane').innerHTML = getDifficultySVG('INSANE', '5.6vh');
+        document.getElementById('f-demon').innerHTML = getDifficultySVG('EXTREME DEMON', '5.6vh');
+        document.getElementById('f-grandpa').innerHTML = getDifficultySVG('GRANDPA DEMON', '6vh');
+        document.getElementById('f-anger').innerHTML = getDifficultySVG('ANGER DEMON', '6vh');
+        document.getElementById('f-auto').innerHTML = getDifficultySVG('AUTO', '5.6vh');
+
+        document.getElementById('df-all').innerHTML = getDifficultySVG('ALL DEMONS', '8vh');
+        document.getElementById('df-easy').innerHTML = getDifficultySVG('EASY DEMON', '8vh');
+        document.getElementById('df-med').innerHTML = getDifficultySVG('MEDIUM DEMON', '8vh');
+        document.getElementById('df-hard').innerHTML = getDifficultySVG('HARD DEMON', '8vh');
+        document.getElementById('df-ins').innerHTML = getDifficultySVG('INSANE DEMON', '8vh');
+        document.getElementById('df-ext').innerHTML = getDifficultySVG('EXTREME DEMON', '8vh');
+        document.getElementById('df-grandpa').innerHTML = getDifficultySVG('GRANDPA DEMON', '8.5vh');
+        document.getElementById('df-anger').innerHTML = getDifficultySVG('ANGER DEMON', '8.5vh');
+    }
+
+    /* ==========================================================================
+       3. LEVELS DATABASE & UPLOAD PERSISTENCE
+       ========================================================================== */
+    const DEFAULT_LEVELS = [
+        {
+            title: 'GRIEF',
+            author: 'ICEDCAVE',
+            song: 'CRIM3S - LOST',
+            diff: 'GRANDPA DEMON',
+            stars: '15 ⭐',
+            length: 'XL',
+            downloads: '4.8M',
+            likes: '390K',
+            orbs: '500/500',
+            desc: 'Grandpa Demon: Levels harder than Grief. Features Crim3s - Lost!',
+            bgTop: '#1c4d26',
+            bgBot: '#3a1054',
+            speed: 12.0,
+            objects: null
+        },
+        {
+            title: 'ANGELICIDE [UN NERFED]',
+            author: 'REDEEMER',
+            song: 'KZX - STALEMATE',
+            diff: 'ANGER DEMON',
+            stars: '20 ⭐',
+            length: 'LONG',
+            downloads: '2.1M',
+            likes: '215K',
+            orbs: '500/500',
+            desc: 'Straight impossible Anger Demon. Soundtrack: Kzx - STALEMATE.',
+            bgTop: '#4a0e78',
+            bgBot: '#1d0330',
+            speed: 13.8,
+            objects: null
+        },
+        {
+            title: 'BLOODBATH',
+            author: 'RIOT',
+            song: 'KZX - STALEMATE',
+            diff: 'EXTREME DEMON',
+            stars: '10 ⭐',
+            length: 'LONG',
+            downloads: '196.4M',
+            likes: '5.6M',
+            orbs: '24/500',
+            desc: 'Legendary Extreme Demon verification mega-collab.',
+            bgTop: '#aa0000',
+            bgBot: '#330000',
+            speed: 10.5,
+            objects: null
+        },
+        {
+            title: 'THE NIGHTMARE',
+            author: 'JAX',
+            song: 'STEREO MADNESS',
+            diff: 'EASY DEMON',
+            stars: '10 ⭐',
+            length: 'LONG',
+            downloads: '179.6M',
+            likes: '6.3M',
+            orbs: '500/500',
+            desc: 'Classic Easy Demon for everyone to beat!',
+            bgTop: '#332288',
+            bgBot: '#110833',
+            speed: 8.5,
+            objects: null
+        }
+    ];
+
+    let LEVELS_DB = [];
+    function loadLevelsDB() {
+        try {
+            const saved = localStorage.getItem('GD_UPLOADED_LEVELS_V2');
+            const parsed = saved ? JSON.parse(saved) : [];
+            LEVELS_DB = [...parsed, ...DEFAULT_LEVELS];
+        } catch (e) {
+            LEVELS_DB = [...DEFAULT_LEVELS];
+        }
+    }
+    loadLevelsDB();
+
+    let activeFilter = 'ALL';
+    let selectedLevel = LEVELS_DB[0];
+
+    function renderLevelsList(headerText = 'ONLINE LEVELS') {
+        document.getElementById('levels-header-title').innerText = headerText;
+        const container = document.getElementById('levels-list-body');
+        container.innerHTML = '';
+
+        const query = (document.getElementById('search-box-input')?.value || '').trim().toUpperCase();
+        const filtered = LEVELS_DB.filter(lvl => {
+            const matchQuery = !query || lvl.title.includes(query) || lvl.author.includes(query);
+            const matchDiff = activeFilter === 'ALL' || lvl.diff.includes(activeFilter);
+            return matchQuery && matchDiff;
+        });
+
+        const listToShow = filtered.length ? filtered : LEVELS_DB;
+
+        listToShow.forEach((lvl, idx) => {
+            const realIdx = LEVELS_DB.indexOf(lvl);
+            const row = document.createElement('div');
+            row.className = 'level-row';
+            row.innerHTML = `
+                <div class="level-left">
+                    <div class="diff-box">
+                        ${getDifficultySVG(lvl.diff, '7.5vh')}
+                        <div class="diff-label">${lvl.diff}</div>
+                        <div style="font-size:1.7vh; color:var(--gd-gold); text-shadow:var(--stroke-sm);">${lvl.stars || '10 ⭐'}</div>
+                    </div>
+                    <div class="level-meta">
+                        <h3>${lvl.title}</h3>
+                        <div class="author">BY ${lvl.author}</div>
+                        <div class="song">🎵 ${lvl.song || 'STEREO MADNESS'}</div>
+                        <div class="stats-line">
+                            <span>🕒 ${lvl.length || 'LONG'}</span>
+                            <span>⬇ ${lvl.downloads || '100'}</span>
+                            <span>👍 ${lvl.likes || '50'}</span>
+                            <span style="color:#44eeff;">🔵 ${lvl.orbs || '500/500'}</span>
+                        </div>
+                    </div>
+                </div>
+                <button class="gd-btn" style="font-size:3.2vh; padding:1.6vh 3.5vh;" onclick="selectLevelByIndex(${realIdx !== -1 ? realIdx : idx})">VIEW</button>
+            `;
+            container.appendChild(row);
+        });
+    }
+
+    function selectLevelByIndex(idx) {
+        const lvl = LEVELS_DB[idx] || LEVELS_DB[0];
+        selectedLevel = lvl;
+        if (lvl.objects && Array.isArray(lvl.objects)) {
+            editorObjects = JSON.parse(JSON.stringify(lvl.objects));
+        }
+        openLevelDetail(
+            lvl.title,
+            lvl.desc,
+            lvl.diff,
+            lvl.bgTop || '#0055cc',
+            lvl.bgBot || '#001a66',
+            lvl.speed || 9.0,
+            Boolean(lvl.objects),
+            lvl.song || 'STEREO MADNESS'
+        );
+    }
+
+    function openLevelDetail(title, desc, diff, bgTop, bgBot, speed, useCustomObjects, song = 'STEREO MADNESS') {
+        selectedLevel = {
+            title,
+            desc,
+            diff,
+            bgTop,
+            bgBot,
+            speed,
+            useCustomObjects,
+            song,
+            objects: useCustomObjects ? JSON.parse(JSON.stringify(editorObjects)) : null
+        };
+        document.getElementById('detail-lvl-title').innerText = title;
+        document.getElementById('detail-lvl-desc').innerText = desc;
+        document.getElementById('detail-song-label').innerText = '🎵 ' + song;
+        document.getElementById('detail-face-holder').innerHTML = getDifficultySVG(diff, '9vh');
+        document.getElementById('upload-title-inp').value = title;
+        document.getElementById('upload-desc-inp').value = desc;
+        showScreen('screen-level-info');
+    }
+
+    function createNewEditorLevel() {
+        editorObjects = [
+            { x: 480, y: 0, type: 'spike', rot: 0, layer: 0, groupId: 0 },
+            { x: 760, y: 0, type: 'block', rot: 0, layer: 0, groupId: 1 },
+            { x: 800, y: 0, type: 'block', rot: 0, layer: 0, groupId: 1 },
+            { x: 640, y: 120, type: 'move_trigger', rot: 0, layer: 0, groupId: 0, targetGroup: 1, moveX: 0, moveY: 20, duration: 0.5 }
+        ];
+        selectedEditorIndices = [];
+        openLevelDetail(
+            'UNNAMED 0',
+            'Custom level created in the editor.',
+            'NORMAL',
+            '#0055cc',
+            '#001a66',
+            9.0,
+            true,
+            'STEREO MADNESS'
+        );
+    }
+
+    function saveEditorToCurrentLevel() {
+        selectedLevel.useCustomObjects = true;
+        selectedLevel.objects = JSON.parse(JSON.stringify(editorObjects));
+    }
+
+    function publishCustomLevel() {
+        const title = (document.getElementById('upload-title-inp').value || 'UNNAMED LEVEL').trim().toUpperCase();
+        const desc = (document.getElementById('upload-desc-inp').value || 'No description provided.').trim();
+        const song = document.getElementById('upload-song-sel').value || 'STEREO MADNESS';
+        const diff = document.getElementById('upload-diff-sel').value || 'NORMAL';
+
+        const newLvl = {
+            title,
+            author: 'YASSINPLAYZ245',
+            song,
+            diff,
+            stars: diff.includes('DEMON') ? '10 ⭐' : '6 ⭐',
+            length: editorObjects.length > 35 ? 'LONG' : 'SHORT',
+            downloads: '1',
+            likes: '1',
+            orbs: '500/500',
+            desc,
+            bgTop: editorBgColor,
+            bgBot: '#001133',
+            speed: diff.includes('ANGER') ? 13.5 : (diff.includes('GRANDPA') ? 12.0 : 9.2),
+            objects: JSON.parse(JSON.stringify(editorObjects))
+        };
+
+        try {
+            const saved = localStorage.getItem('GD_UPLOADED_LEVELS_V2');
+            const parsed = saved ? JSON.parse(saved) : [];
+            parsed.unshift(newLvl);
+            localStorage.setItem('GD_UPLOADED_LEVELS_V2', JSON.stringify(parsed));
+        } catch (e) {}
+
+        loadLevelsDB();
+        closeModal('modal-upload-level');
+        closeModal('modal-editor-pause');
+        showScreen('screen-levels', 'ONLINE LEVELS');
+    }
+
+    function exportLevelCode() {
+        saveEditorToCurrentLevel();
+        const payload = {
+            title: selectedLevel.title || 'CUSTOM LEVEL',
+            desc: selectedLevel.desc || '',
+            song: selectedLevel.song || 'STEREO MADNESS',
+            diff: selectedLevel.diff || 'NORMAL',
+            bgTop: editorBgColor,
+            objects: editorObjects
+        };
+        const code = btoa(unescape(encodeURIComponent(JSON.stringify(payload))));
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(code).catch(() => {});
+        }
+        prompt('Copy your shareable Level Code below:', code);
+    }
+
+    function importLevelCode() {
+        const code = prompt('Paste a Level Code to import:');
+        if (!code) return;
+        try {
+            const decoded = JSON.parse(decodeURIComponent(escape(atob(code.trim()))));
+            if (Array.isArray(decoded.objects)) {
+                editorObjects = decoded.objects;
+                editorBgColor = decoded.bgTop || '#0055cc';
+                openLevelDetail(
+                    decoded.title || 'IMPORTED LEVEL',
+                    decoded.desc || 'Imported via level code',
+                    decoded.diff || 'NORMAL',
+                    editorBgColor,
+                    '#001133',
+                    9.2,
+                    true,
+                    decoded.song || 'STEREO MADNESS'
+                );
+            }
+        } catch (e) {
+            alert('Invalid Level Code!');
+        }
+    }
+
+    /* ==========================================================================
+       4. NAVIGATION & MODAL HELPERS
+       ========================================================================== */
+    function showScreen(id, listHeader) {
+        if (id !== 'screen-play' && id !== 'screen-editor') {
+            stopInEditorPlaytest();
+        }
+        document.querySelectorAll('.screen').forEach(el => el.classList.remove('active'));
+        const target = document.getElementById(id);
+        if (target) target.classList.add('active');
+
+        if (id === 'screen-levels') {
+            renderLevelsList(listHeader || 'ONLINE LEVELS');
+        }
+        if (id === 'screen-editor') {
+            resizeEditorCanvas();
+            drawEditorCanvas();
+        }
+    }
+
+    function openModal(id) {
+        const el = document.getElementById(id);
+        if (el) el.classList.add('active');
+        if (id === 'modal-editor-pause') {
+            document.getElementById('pause-obj-count').innerText = editorObjects.length;
+        }
+    }
+
+    function closeModal(id) {
+        const el = document.getElementById(id);
+        if (el) el.classList.remove('active');
+    }
+
+    function toggleCheck(rowEl) {
+        const box = rowEl.querySelector('.chk-box');
+        if (box) box.innerText = box.innerText ? '' : '✔';
+    }
+
+    function toggleDiffFilter(el, filterName) {
+        document.querySelectorAll('.filters-bar .filter-item').forEach(i => i.classList.remove('selected'));
+        el.classList.add('selected');
+        activeFilter = filterName;
+    }
+
+    function pickDemonFilter(demonType) {
+        activeFilter = demonType === 'ALL DEMONS' ? 'DEMON' : demonType;
+        document.getElementById('demon-filter-label').innerText = demonType.replace(' ', '\n');
+        closeModal('modal-demon-filter');
+    }
+
+    function clearSearchFilters() {
+        activeFilter = 'ALL';
+        document.querySelectorAll('.filters-bar .filter-item').forEach(i => i.classList.remove('selected'));
+    }
+
+    /* ==========================================================================
+       5. GARAGE & SHOP LOGIC
+       ========================================================================== */
+    let playerOrbs = 8025;
+    const cubeColors = ['#ff0077', '#00ffaa', '#33aaff', '#ffaa00', '#aa33ff', '#77ff22'];
+    let colorIdx = 0;
+
+    function initGarageGrid() {
+        const grid = document.getElementById('garage-grid');
+        if (!grid) return;
+        grid.innerHTML = '';
+        for (let i = 0; i < 36; i++) {
+            const slot = document.createElement('div');
+            slot.className = 'icon-slot' + (i === 0 ? ' selected' : '');
+            slot.innerHTML = i < 20 ? '◼' : '🔒';
+            slot.onclick = () => {
+                document.querySelectorAll('.icon-slot').forEach(s => s.classList.remove('selected'));
+                slot.classList.add('selected');
+                cycleIconColor();
+            };
+            grid.appendChild(slot);
+        }
+    }
+
+    function cycleIconColor() {
+        colorIdx = (colorIdx + 1) % cubeColors.length;
+        const prev = document.getElementById('preview-cube');
+        if (prev) prev.style.background = cubeColors[colorIdx];
+    }
+
+    function buyShopItem(cost) {
+        if (playerOrbs >= cost) {
+            playerOrbs -= cost;
+            document.getElementById('shop-orbs-txt').innerText = playerOrbs;
+            document.getElementById('garage-orb-count').innerText = playerOrbs + ' 🔵';
+        }
+    }
+
+    /* ==========================================================================
+       6. AUTHENTIC LEVEL EDITOR ENGINE (Move Triggers, Groups, Multi-Select)
+       ========================================================================== */
+    const edCanvas = document.getElementById('editor-canvas');
+    const edCtx = edCanvas.getContext('2d');
+
+    const BUILD_CATALOG = {
+        blocks: [
+            { id: 'block', icon: '◼', name: 'BLOCK' },
+            { id: 'brick', icon: '🧱', name: 'BRICK' },
+            { id: 'metal', icon: '🔲', name: 'METAL' },
+            { id: 'neon_block', icon: '🟦', name: 'NEON' },
+            { id: 'pillar', icon: '🏛️', name: 'PILLAR' },
+            { id: 'half_block', icon: '▬', name: 'SLAB' },
+            { id: 'glass', icon: '🧊', name: 'GLASS' },
+            { id: 'checker', icon: '🏁', name: 'CHECK' }
+        ],
+        outlines: [
+            { id: 'outline_box', icon: '⬜', name: 'LINE' },
+            { id: 'corner_ul', icon: '⌜', name: 'CORNER' },
+            { id: 'corner_ur', icon: '⌝', name: 'CORNER' },
+            { id: 'glow_edge', icon: '✨', name: 'GLOW' }
+        ],
+        slopes: [
+            { id: 'slope_up', icon: '📐', name: 'SLOPE' },
+            { id: 'slope_steep', icon: '⛰️', name: 'STEEP' }
+        ],
+        spikes: [
+            { id: 'spike', icon: '▲', name: 'SPIKE' },
+            { id: 'half_spike', icon: '▴', name: 'MINI' },
+            { id: 'red_spike', icon: '🔺', name: 'BLOOD' },
+            { id: 'Monster', icon: '👾', name: 'CLUB' }
+        ],
+        orbs: [
+            { id: 'orb_yellow', icon: '🟡', name: 'Y-ORB' },
+            { id: 'orb_pink', icon: '🟣', name: 'P-ORB' },
+            { id: 'orb_blue', icon: '🔵', name: 'B-ORB' },
+            { id: 'orb_green', icon: '🟢', name: 'G-ORB' },
+            { id: 'orb_black', icon: '⚫', name: 'BLK' },
+            { id: 'orb_dash', icon: '🟢➤', name: 'DASH' }
+        ],
+        pads: [
+            { id: 'pad', icon: '🟨', name: 'Y-PAD' },
+            { id: 'pad_pink', icon: '🟪', name: 'P-PAD' },
+            { id: 'portal_ship', icon: '🚀', name: 'SHIP' },
+            { id: 'portal_cube', icon: '◼', name: 'CUBE' },
+            { id: 'portal_wave', icon: '➤', name: 'WAVE' },
+            { id: 'speed_2x', icon: '⏩', name: 'SPEED' }
+        ],
+        saws: [
+            { id: 'saw', icon: '⚙️', name: 'SAW' },
+            { id: 'blade', icon: '💿', name: 'BLADE' },
+            { id: 'fire', icon: '🔥', name: 'FIRE' },
+            { id: 'coin', icon: '🪙', name: 'COIN' }
+        ],
+        triggers: [
+            { id: 'move_trigger', icon: '✥', name: 'MOVE' },
+            { id: 'color_trigger', icon: '🎨', name: 'COLOR' },
+            { id: 'alpha_trigger', icon: '👻', name: 'ALPHA' },
+            { id: 'pulse_trigger', icon: '⚡', name: 'PULSE' }
+        ]
+    };
+
+    let editorObjects = [
+        { x: 480, y: 0, type: 'spike', rot: 0, layer: 0, groupId: 0 },
+        { x: 760, y: 0, type: 'block', rot: 0, layer: 0, groupId: 1 },
+        { x: 800, y: 0, type: 'block', rot: 0, layer: 0, groupId: 1 },
+        { x: 640, y: 120, type: 'move_trigger', rot: 0, layer: 0, groupId: 0, targetGroup: 1, moveX: 0, moveY: 20, duration: 0.5 }
+    ];
+    let undoStack = [];
+    let redoStack = [];
+    let selectedEditorIndices = [];
+    let clipboardObjects = [];
+
+    let currentBuildCategory = 'blocks';
+    let currentEditorTool = 'block';
+    let editorDeckMode = 'build';
+    let editorZoom = 1.0;
+    let currentEditorLayer = 0; // 0 = All layers
+    let editorBgColor = '#0055cc';
+    let showEditorGrid = true;
+    let previewEditorColors = true;
+    let editorFlags = { swipe: false, freeMove: false, snap: true };
+    let isPointerDownInEditor = false;
+
+    // In-Editor Live Playtest State
+    let inEditorPlaytestActive = false;
+    let edPlayAnimId = null;
+    let edPlayCube = { x: 160, y: 0, vy: 0, size: 40, rot: 0, onGround: true, holding: false, trail: [] };
+    let edActiveMoves = {};
+
+    function pushUndoState() {
+        undoStack.push(JSON.stringify(editorObjects));
+        if (undoStack.length > 35) undoStack.shift();
+        redoStack = [];
+    }
+
+    function undoEditorObj() {
+        if (undoStack.length === 0) return;
+        redoStack.push(JSON.stringify(editorObjects));
+        editorObjects = JSON.parse(undoStack.pop());
+        selectedEditorIndices = [];
+        drawEditorCanvas();
+    }
+
+    function redoEditorObj() {
+        if (redoStack.length === 0) return;
+        undoStack.push(JSON.stringify(editorObjects));
+        editorObjects = JSON.parse(redoStack.pop());
+        selectedEditorIndices = [];
+        drawEditorCanvas();
+    }
+
+    function resizeEditorCanvas() {
+        edCanvas.width = window.innerWidth;
+        edCanvas.height = window.innerHeight;
+    }
+
+    function selectBuildCategory(cat, tabEl) {
+        currentBuildCategory = cat;
+        document.querySelectorAll('#ed-category-bar .ed-subtab').forEach(t => t.classList.remove('active'));
+        if (tabEl) tabEl.classList.add('active');
+        populateEditorPalette(editorDeckMode);
+    }
+
+    function populateEditorPalette(mode) {
+        const container = document.getElementById('editor-palette-container');
+        if (!container) return;
+        container.innerHTML = '';
+
+        if (mode === 'edit') {
+            const nudges = [
+                { label: '⬆ 1', dx: 0, dy: 40 },
+                { label: '⬇ 1', dx: 0, dy: -40 },
+                { label: '⬅ 1', dx: -40, dy: 0 },
+                { label: '➡ 1', dx: 40, dy: 0 },
+                { label: '⬆ MINI', dx: 0, dy: 8 },
+                { label: '⬇ MINI', dx: 0, dy: -8 },
+                { label: '⬅ MINI', dx: -8, dy: 0 },
+                { label: '➡ MINI', dx: 8, dy: 0 },
+                { label: 'ROT +90°', rot: 90 },
+                { label: 'ROT -90°', rot: -90 },
+                { label: 'EDIT MOVE', modal: 'move' },
+                { label: 'GROUP ID', modal: 'group' }
+            ];
+            nudges.forEach(item => {
+                const slot = document.createElement('div');
+                slot.className = 'palette-slot';
+                slot.innerHTML = `<span>${item.label}</span>`;
+                slot.onclick = () => {
+                    if (item.modal === 'move') openEditTriggerModal();
+                    else if (item.modal === 'group') openModal('modal-edit-group');
+                    else if (item.rot) rotateSelectedEditorObjs(item.rot);
+                    else moveSelectedEditorObjs(item.dx, item.dy);
+                };
+                container.appendChild(slot);
+            });
+            return;
+        }
+
+        if (mode === 'view') {
+            const views = [
+                { label: 'PREVIEW', fn: togglePreviewColors },
+                { label: 'GRID', fn: toggleGridOverlay },
+                { label: 'LAYER 0', fn: () => setEditorLayer(0) },
+                { label: 'LAYER 1', fn: () => setEditorLayer(1) },
+                { label: 'LAYER 2', fn: () => setEditorLayer(2) },
+                { label: 'ZOOM +', fn: () => zoomEditor(1.15) },
+                { label: 'ZOOM -', fn: () => zoomEditor(0.85) },
+                { label: 'RESET ZM', fn: () => { editorZoom = 1.0; drawEditorCanvas(); } }
+            ];
+            views.forEach(v => {
+                const slot = document.createElement('div');
+                slot.className = 'palette-slot';
+                slot.innerHTML = `<small>${v.label}</small>`;
+                slot.onclick = v.fn;
+                container.appendChild(slot);
+            });
+            return;
+        }
+
+        const list = BUILD_CATALOG[currentBuildCategory] || BUILD_CATALOG.blocks;
+        list.forEach((item, idx) => {
+            const slot = document.createElement('div');
+            slot.className = 'palette-slot' + (item.id === currentEditorTool || idx === 0 ? ' selected' : '');
+            slot.innerHTML = `<span>${item.icon}</span><small>${item.name}</small>`;
+            slot.onclick = () => {
+                container.querySelectorAll('.palette-slot').forEach(s => s.classList.remove('selected'));
+                slot.classList.add('selected');
+                currentEditorTool = item.id;
+            };
+            container.appendChild(slot);
+        });
+        if (list[0]) currentEditorTool = list[0].id;
+    }
+
+    function switchEditorDeck(mode) {
+        editorDeckMode = mode;
+        ['build', 'edit', 'delete', 'view'].forEach(m => {
+            const btn = document.getElementById('tab-btn-' + m);
+            if (btn) btn.className = 'gd-btn ' + (m === mode ? 'cyan' : 'gray');
+        });
+        populateEditorPalette(mode);
+    }
+
+    function toggleEditorFlag(flag) {
+        editorFlags[flag] = !editorFlags[flag];
+        const map = { swipe: 'toggle-btn-swipe', freeMove: 'toggle-btn-freemove', snap: 'toggle-btn-snap' };
+        const btn = document.getElementById(map[flag]);
+        if (btn) btn.className = 'gd-btn ' + (editorFlags[flag] ? '' : 'gray');
+    }
+
+    function zoomEditor(factor) {
+        editorZoom = Math.min(1.85, Math.max(0.55, editorZoom * factor));
+        drawEditorCanvas();
+    }
+
+    function cycleEditorLayer(delta) {
+        currentEditorLayer = Math.max(0, currentEditorLayer + delta);
+        document.getElementById('ed-layer-num').innerText = currentEditorLayer === 0 ? 'ALL' : currentEditorLayer;
+        drawEditorCanvas();
+    }
+
+    function setEditorLayer(layer) {
+        currentEditorLayer = layer;
+        document.getElementById('ed-layer-num').innerText = layer === 0 ? 'ALL' : layer;
+        drawEditorCanvas();
+    }
+
+    function toggleGridOverlay() {
+        showEditorGrid = !showEditorGrid;
+        drawEditorCanvas();
+    }
+
+    function togglePreviewColors() {
+        previewEditorColors = !previewEditorColors;
+        drawEditorCanvas();
+    }
+
+    function updateEditorBgColor(col) {
+        editorBgColor = col;
+        selectedLevel.bgTop = col;
+        drawEditorCanvas();
+    }
+
+    function deselectAllEditorObjs() {
+        selectedEditorIndices = [];
+        drawEditorCanvas();
+    }
+
+    function deleteSelectedEditorObjs() {
+        if (selectedEditorIndices.length === 0) return;
+        pushUndoState();
+        editorObjects = editorObjects.filter((_, idx) => !selectedEditorIndices.includes(idx));
+        selectedEditorIndices = [];
+        drawEditorCanvas();
+    }
+
+    function moveSelectedEditorObjs(dx, dy) {
+        if (selectedEditorIndices.length === 0) return;
+        pushUndoState();
+        selectedEditorIndices.forEach(idx => {
+            if (editorObjects[idx]) {
+                editorObjects[idx].x += dx;
+                editorObjects[idx].y = Math.max(0, editorObjects[idx].y + dy);
+            }
+        });
+        drawEditorCanvas();
+    }
+
+    function rotateSelectedEditorObjs(deg) {
+        if (selectedEditorIndices.length === 0 && editorObjects.length > 0) {
+            selectedEditorIndices = [editorObjects.length - 1];
+        }
+        pushUndoState();
+        selectedEditorIndices.forEach(idx => {
+            if (editorObjects[idx]) {
+                editorObjects[idx].rot = ((editorObjects[idx].rot || 0) + deg + 360) % 360;
+            }
+        });
+        drawEditorCanvas();
+    }
+
+    function copySelectedObjs() {
+        if (selectedEditorIndices.length === 0 && editorObjects.length > 0) {
+            selectedEditorIndices = [editorObjects.length - 1];
+        }
+        clipboardObjects = selectedEditorIndices.map(i => JSON.parse(JSON.stringify(editorObjects[i]))).filter(Boolean);
+    }
+
+    function pasteCopiedObjs() {
+        if (clipboardObjects.length === 0) return;
+        pushUndoState();
+        selectedEditorIndices = [];
+        clipboardObjects.forEach(obj => {
+            const clone = JSON.parse(JSON.stringify(obj));
+            clone.x += 40;
+            editorObjects.push(clone);
+            selectedEditorIndices.push(editorObjects.length - 1);
+        });
+        drawEditorCanvas();
+    }
+
+    function duplicateSelectedEditorObj() {
+        copySelectedObjs();
+        pasteCopiedObjs();
+    }
+
+    function openEditTriggerModal() {
+        if (selectedEditorIndices.length === 0 && editorObjects.length > 0) {
+            selectedEditorIndices = [editorObjects.length - 1];
+        }
+        const obj = editorObjects[selectedEditorIndices[0]];
+        if (!obj) return;
+
+        if (obj.type === 'move_trigger') {
+            document.getElementById('mv-target-val').innerText = obj.targetGroup ?? 1;
+            document.getElementById('mv-x-val').innerText = obj.moveX ?? 0;
+            document.getElementById('mv-y-val').innerText = obj.moveY ?? 20;
+            document.getElementById('mv-dur-val').innerText = (obj.duration ?? 0.5).toFixed(2) + 's';
+            openModal('modal-edit-move');
+        } else {
+            document.getElementById('edit-group-val').innerText = obj.groupId || 0;
+            openModal('modal-edit-group');
+        }
+    }
+
+    function adjustMoveParam(param, delta) {
+        const obj = editorObjects[selectedEditorIndices[0]];
+        if (!obj) return;
+        if (param === 'targetGroup') {
+            obj.targetGroup = Math.max(1, (obj.targetGroup || 1) + delta);
+            document.getElementById('mv-target-val').innerText = obj.targetGroup;
+        } else if (param === 'moveX') {
+            obj.moveX = (obj.moveX || 0) + delta;
+            document.getElementById('mv-x-val').innerText = obj.moveX;
+        } else if (param === 'moveY') {
+            obj.moveY = (obj.moveY || 0) + delta;
+            document.getElementById('mv-y-val').innerText = obj.moveY;
+        } else if (param === 'duration') {
+            obj.duration = Math.max(0, Number(((obj.duration ?? 0.5) + delta).toFixed(2)));
+            document.getElementById('mv-dur-val').innerText = obj.duration.toFixed(2) + 's';
+        }
+    }
+
+    function changeSelectedGroupId(delta) {
+        if (selectedEditorIndices.length === 0) return;
+        const first = editorObjects[selectedEditorIndices[0]];
+        const nextVal = Math.max(0, (first.groupId || 0) + delta);
+        selectedEditorIndices.forEach(idx => {
+            if (editorObjects[idx]) editorObjects[idx].groupId = nextVal;
+        });
+        document.getElementById('edit-group-val').innerText = nextVal;
+    }
+
+    function setNextFreeGroup() {
+        let maxG = 0;
+        editorObjects.forEach(o => { if ((o.groupId || 0) > maxG) maxG = o.groupId; });
+        const freeG = maxG + 1;
+        selectedEditorIndices.forEach(idx => {
+            if (editorObjects[idx]) editorObjects[idx].groupId = freeG;
+        });
+        document.getElementById('edit-group-val').innerText = freeG;
+    }
+
+    function toggleEditorMusicPreview() {
+        if (audioPlayer.paused) {
+            const scrollX = Number(document.getElementById('editor-scroll').value || 0);
+            const startSec = scrollX / (9.0 * 60);
+            playSongTrack(selectedLevel.song || 'STEREO MADNESS', startSec);
+        } else {
+            stopAllAudio();
+        }
+    }
+
+    // In-Editor Live Playtest
+    function toggleInEditorPlaytest() {
+        if (inEditorPlaytestActive) {
+            stopInEditorPlaytest();
+        } else {
+            startInEditorPlaytest();
+        }
+    }
+
+    function startInEditorPlaytest() {
+        inEditorPlaytestActive = true;
+        document.getElementById('ed-playtest-btn').innerText = '⏹';
+        const scrollX = Number(document.getElementById('editor-scroll').value || 0);
+        edPlayCube = {
+            x: scrollX + 160,
+            y: 0,
+            vy: 0,
+            size: 40,
+            rot: 0,
+            onGround: true,
+            holding: false,
+            trail: []
+        };
+        edActiveMoves = {};
+        editorObjects.forEach(o => { o._triggered = false; });
+
+        const startSec = scrollX / (9.0 * 60);
+        playSongTrack(selectedLevel.song || 'STEREO MADNESS', startSec);
+        cancelAnimationFrame(edPlayAnimId);
+        edPlayAnimId = requestAnimationFrame(updateInEditorPlaytest);
+    }
+
+    function stopInEditorPlaytest() {
+        inEditorPlaytestActive = false;
+        const btn = document.getElementById('ed-playtest-btn');
+        if (btn) btn.innerText = '▶';
+        cancelAnimationFrame(edPlayAnimId);
+        stopAllAudio();
+        drawEditorCanvas();
+    }
+
+    function getGroupOffset(groupId, map) {
+        if (!groupId || !map[groupId]) return { dx: 0, dy: 0 };
+        return map[groupId];
+    }
+
+    function updateInEditorPlaytest() {
+        if (!inEditorPlaytestActive) return;
+
+        edPlayCube.x += 8.8;
+        edPlayCube.vy -= 0.85; // y is height above ground
+        edPlayCube.y += edPlayCube.vy;
+
+        if (edPlayCube.y <= 0) {
+            edPlayCube.y = 0;
+            edPlayCube.vy = 0;
+            edPlayCube.onGround = true;
+            edPlayCube.rot = Math.round(edPlayCube.rot / (Math.PI / 2)) * (Math.PI / 2);
+            if (edPlayCube.holding) {
+                edPlayCube.vy = 14.2;
+                edPlayCube.onGround = false;
+            }
+        } else {
+            edPlayCube.onGround = false;
+            edPlayCube.rot += 0.13;
+        }
+
+        // Check Move Triggers
+        editorObjects.forEach(obj => {
+            if (obj.type === 'move_trigger' && !obj._triggered && edPlayCube.x >= obj.x) {
+                obj._triggered = true;
+                const grp = obj.targetGroup || 1;
+                if (!edActiveMoves[grp]) edActiveMoves[grp] = { dx: 0, dy: 0, anims: [] };
+                edActiveMoves[grp].anims.push({
+                    totalDx: (obj.moveX || 0) * 4,
+                    totalDy: (obj.moveY || 0) * 4,
+                    elapsed: 0,
+                    duration: Math.max(0.02, obj.duration ?? 0.5)
+                });
+            }
+        });
+
+        // Step active group animations
+        Object.keys(edActiveMoves).forEach(g => {
+            const state = edActiveMoves[g];
+            let sumX = 0, sumY = 0;
+            state.anims.forEach(a => {
+                a.elapsed = Math.min(a.duration, a.elapsed + 1 / 60);
+                const t = a.elapsed / a.duration;
+                sumX += a.totalDx * t;
+                sumY += a.totalDy * t;
+            });
+            state.dx = sumX;
+            state.dy = sumY;
+        });
+
+        edPlayCube.trail.push({ x: edPlayCube.x, y: edPlayCube.y });
+        if (edPlayCube.trail.length > 60) edPlayCube.trail.shift();
+
+        document.getElementById('editor-scroll').value = Math.max(0, edPlayCube.x - 160);
+        drawEditorCanvas();
+
+        edPlayAnimId = requestAnimationFrame(updateInEditorPlaytest);
+    }
+
+    function drawEditorObjectShape(ctx, type, sx, sy, cell, isSelected, obj) {
+        ctx.save();
+        if (type === 'move_trigger' || type.includes('trigger')) {
+            ctx.fillStyle = isSelected ? '#00ffff' : '#ffbb00';
+            ctx.strokeStyle = '#fff';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(sx + cell / 2, sy + 2);
+            ctx.lineTo(sx + cell - 2, sy + cell / 2);
+            ctx.lineTo(sx + cell / 2, sy + cell - 2);
+            ctx.lineTo(sx + 2, sy + cell / 2);
+            ctx.closePath();
+            ctx.fill();
+            ctx.stroke();
+
+            ctx.fillStyle = '#000';
+            ctx.font = `bold ${Math.max(9, cell * 0.28)}px Pusab, sans-serif`;
+            ctx.textAlign = 'center';
+            ctx.fillText('MOVE', sx + cell / 2, sy + cell * 0.48);
+            ctx.fillText('G:' + (obj.targetGroup || 1), sx + cell / 2, sy + cell * 0.76);
+        } else if (type.includes('spike')) {
+            ctx.fillStyle = type === 'red_spike' ? '#cc1111' : '#111';
+            ctx.strokeStyle = isSelected ? '#00ff44' : '#fff';
+            ctx.lineWidth = 2;
+            const h = type === 'half_spike' ? cell * 0.5 : cell;
+            ctx.beginPath();
+            ctx.moveTo(sx, sy + cell);
+            ctx.lineTo(sx + cell / 2, sy + (cell - h));
+            ctx.lineTo(sx + cell, sy + cell);
+            ctx.closePath();
+            ctx.fill();
+            ctx.stroke();
+        } else if (type.includes('orb')) {
+            const orbCols = { orb_yellow: '#ffee00', orb_pink: '#ff44cc', orb_blue: '#00ddff', orb_green: '#44ff44', orb_black: '#111', orb_dash: '#33ff77' };
+            ctx.fillStyle = orbCols[type] || '#ffee00';
+            ctx.strokeStyle = isSelected ? '#00ff44' : '#fff';
+            ctx.lineWidth = 2.5;
+            ctx.beginPath();
+            ctx.arc(sx + cell / 2, sy + cell / 2, cell * 0.38, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.stroke();
+        } else if (type.includes('pad')) {
+            ctx.fillStyle = type === 'pad_pink' ? '#ff44cc' : '#ffee00';
+            ctx.fillRect(sx + 4, sy + cell - 10, cell - 8, 10);
+            ctx.strokeStyle = '#fff';
+            ctx.strokeRect(sx + 4, sy + cell - 10, cell - 8, 10);
+        } else if (type === 'saw' || type === 'blade' || type === 'coin') {
+            ctx.fillStyle = type === 'coin' ? '#ffcc00' : '#ccc';
+            ctx.strokeStyle = isSelected ? '#00ff44' : '#000';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.arc(sx + cell / 2, sy + cell / 2, cell * 0.45, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.stroke();
+        } else {
+            ctx.fillStyle = type === 'neon_block' ? '#0055aa' : '#152238';
+            const h = type === 'half_block' ? cell * 0.5 : cell;
+            ctx.fillRect(sx, sy + (cell - h), cell, h);
+            ctx.strokeStyle = isSelected ? '#00ff44' : '#44ddff';
+            ctx.lineWidth = isSelected ? 3 : 2;
+            ctx.strokeRect(sx, sy + (cell - h), cell, h);
+        }
+
+        if (obj.groupId) {
+            ctx.fillStyle = '#ffee00';
+            ctx.font = `bold ${Math.max(10, cell * 0.3)}px sans-serif`;
+            ctx.fillText(obj.groupId, sx + 4, sy + 12);
+        }
+        ctx.restore();
+    }
+
+    function drawEditorCanvas() {
+        if (!edCanvas.width) return;
+        const scrollX = Number(document.getElementById('editor-scroll').value || 0);
+        const floorY = edCanvas.height * 0.66;
+        const cell = 40 * editorZoom;
+
+        edCtx.fillStyle = previewEditorColors ? editorBgColor : '#0044aa';
+        edCtx.fillRect(0, 0, edCanvas.width, edCanvas.height);
+
+        if (showEditorGrid) {
+            edCtx.strokeStyle = 'rgba(255,255,255,0.22)';
+            edCtx.lineWidth = 1;
+            const offsetX = -(scrollX * editorZoom) % cell;
+            edCtx.beginPath();
+            for (let x = offsetX; x < edCanvas.width; x += cell) {
+                edCtx.moveTo(x, 0);
+                edCtx.lineTo(x, floorY);
+            }
+            for (let y = floorY; y > 0; y -= cell) {
+                edCtx.moveTo(0, y);
+                edCtx.lineTo(edCanvas.width, y);
+            }
+            edCtx.stroke();
+        }
+
+        // Ground
+        edCtx.fillStyle = '#002a77';
+        edCtx.fillRect(0, floorY, edCanvas.width, edCanvas.height - floorY);
+        edCtx.strokeStyle = '#fff';
+        edCtx.lineWidth = 3;
+        edCtx.beginPath();
+        edCtx.moveTo(0, floorY);
+        edCtx.lineTo(edCanvas.width, floorY);
+        edCtx.stroke();
+
+        // Objects
+        editorObjects.forEach((obj, idx) => {
+            if (currentEditorLayer !== 0 && (obj.layer || 0) !== currentEditorLayer) {
+                edCtx.globalAlpha = 0.35;
+            } else {
+                edCtx.globalAlpha = 1.0;
+            }
+
+            const off = inEditorPlaytestActive ? getGroupOffset(obj.groupId, edActiveMoves) : { dx: 0, dy: 0 };
+            const sx = ((obj.x + off.dx) - scrollX) * editorZoom;
+            const sy = floorY - (obj.y + off.dy + 40) * editorZoom;
+
+            if (sx + cell < -50 || sx > edCanvas.width + 50) return;
+
+            const isSel = selectedEditorIndices.includes(idx);
+            drawEditorObjectShape(edCtx, obj.type, sx, sy, cell, isSel, obj);
+        });
+        edCtx.globalAlpha = 1.0;
+
+        // Draw In-Editor Playtest Trail & Cube
+        if (inEditorPlaytestActive) {
+            edCtx.strokeStyle = '#00ff66';
+            edCtx.lineWidth = 3;
+            edCtx.beginPath();
+            edPlayCube.trail.forEach((pt, i) => {
+                const tx = (pt.x - scrollX) * editorZoom + cell / 2;
+                const ty = floorY - (pt.y + 20) * editorZoom;
+                if (i === 0) edCtx.moveTo(tx, ty);
+                else edCtx.lineTo(tx, ty);
+            });
+            edCtx.stroke();
+
+            const px = (edPlayCube.x - scrollX) * editorZoom;
+            const py = floorY - (edPlayCube.y + 40) * editorZoom;
+            edCtx.save();
+            edCtx.translate(px + cell / 2, py + cell / 2);
+            edCtx.rotate(edPlayCube.rot);
+            edCtx.fillStyle = cubeColors[colorIdx];
+            edCtx.fillRect(-cell / 2, -cell / 2, cell, cell);
+            edCtx.strokeStyle = '#000';
+            edCtx.lineWidth = 3;
+            edCtx.strokeRect(-cell / 2, -cell / 2, cell, cell);
+            edCtx.restore();
+        }
+    }
+
+    function handleEditorPointerAt(clientX, clientY, isDrag) {
+        if (inEditorPlaytestActive) {
+            edPlayCube.holding = true;
+            if (edPlayCube.onGround) {
+                edPlayCube.vy = 14.2;
+                edPlayCube.onGround = false;
+            }
+            return;
+        }
+
+        const rect = edCanvas.getBoundingClientRect();
+        const cx = clientX - rect.left;
+        const cy = clientY - rect.top;
+        const floorY = edCanvas.height * 0.66;
+        if (cy > floorY || cy < edCanvas.height * 0.11) return;
+
+        const scrollX = Number(document.getElementById('editor-scroll').value || 0);
+        const rawX = cx / editorZoom + scrollX;
+        const rawY = (floorY - cy) / editorZoom;
+
+        const worldX = editorFlags.snap ? Math.floor(rawX / 40) * 40 : Math.floor(rawX);
+        const worldY = editorFlags.snap ? Math.floor(rawY / 40) * 40 : Math.floor(rawY - 20);
+
+        const hitIdx = editorObjects.findIndex(o => Math.abs(o.x - worldX) < 32 && Math.abs(o.y - worldY) < 32);
+
+        if (editorDeckMode === 'delete') {
+            if (hitIdx !== -1) {
+                pushUndoState();
+                editorObjects.splice(hitIdx, 1);
+                selectedEditorIndices = [];
+                drawEditorCanvas();
+            }
+        } else if (editorDeckMode === 'edit') {
+            if (hitIdx !== -1 && !isDrag) {
+                if (editorFlags.swipe) {
+                    if (!selectedEditorIndices.includes(hitIdx)) selectedEditorIndices.push(hitIdx);
+                } else {
+                    selectedEditorIndices = [hitIdx];
+                }
+                drawEditorCanvas();
+            } else if (editorFlags.freeMove && isDrag && selectedEditorIndices.length > 0) {
+                const primary = editorObjects[selectedEditorIndices[0]];
+                if (primary) {
+                    primary.x = worldX;
+                    primary.y = Math.max(0, worldY);
+                    drawEditorCanvas();
+                }
+            }
+        } else if (editorDeckMode === 'build') {
+            if (hitIdx !== -1 && editorObjects[hitIdx].type === currentEditorTool) return;
+            pushUndoState();
+            if (hitIdx !== -1) editorObjects.splice(hitIdx, 1);
+
+            const newObj = {
+                x: worldX,
+                y: Math.max(0, worldY),
+                type: currentEditorTool,
+                rot: 0,
+                layer: currentEditorLayer,
+                groupId: 0
+            };
+            if (currentEditorTool === 'move_trigger') {
+                newObj.targetGroup = 1;
+                newObj.moveX = 0;
+                newObj.moveY = 20;
+                newObj.duration = 0.5;
+            }
+            editorObjects.push(newObj);
+            selectedEditorIndices = [editorObjects.length - 1];
+            drawEditorCanvas();
+        }
+    }
+
+    edCanvas.addEventListener('pointerdown', e => {
+        isPointerDownInEditor = true;
+        handleEditorPointerAt(e.clientX, e.clientY, false);
+    });
+    edCanvas.addEventListener('pointermove', e => {
+        if (!isPointerDownInEditor) return;
+        if (editorFlags.swipe || editorFlags.freeMove) {
+            handleEditorPointerAt(e.clientX, e.clientY, true);
+        }
+    });
+    window.addEventListener('pointerup', () => {
+        isPointerDownInEditor = false;
+        edPlayCube.holding = false;
+    });
+
+    /* ==========================================================================
+       7. FULLSCREEN PLAYABLE GEOMETRY DASH ENGINE (With Move Triggers & Orbs)
+       ========================================================================== */
+    const playCanvas = document.getElementById('play-canvas');
+    const pCtx = playCanvas.getContext('2d');
+    let animId = null;
+    let isPlaying = false;
+    let playConfig = { title: '', bgTop: '#0055ff', bgBot: '#001155', speed: 9.0, song: 'STEREO MADNESS' };
+    let levelObjs = [];
+    let activeGroupMoves = {};
+    let camX = 0;
+    let cube = { x: 160, y: 0, vy: 0, size: 42, rot: 0, onGround: true, holdingJump: false, canOrbJump: false };
+
+    function playtestEditorLevel() {
+        saveEditorToCurrentLevel();
+        playSelectedLevel();
+    }
+
+    function playSelectedLevel() {
+        launchLevel(
+            selectedLevel.title,
+            selectedLevel.diff,
+            selectedLevel.bgTop || editorBgColor,
+            selectedLevel.bgBot || '#001133',
+            selectedLevel.speed || 9.0,
+            Boolean(selectedLevel.useCustomObjects || (selectedLevel.objects && selectedLevel.objects.length)),
+            selectedLevel.song || 'STEREO MADNESS'
+        );
+    }
+
+    function launchLevel(title, diff, bgTop, bgBot, speed, useCustom = false, song = 'STEREO MADNESS') {
+        showScreen('screen-play');
+        playCanvas.width = window.innerWidth;
+        playCanvas.height = window.innerHeight;
+        playConfig = { title, diff, bgTop, bgBot, speed, song };
+
+        const sourceObjs = selectedLevel.objects || editorObjects;
+        if (useCustom && sourceObjs && sourceObjs.length > 0) {
+            levelObjs = JSON.parse(JSON.stringify(sourceObjs));
+        } else {
+            levelObjs = [];
+            let cursor = 550;
+            const spacing = speed > 11.5 ? 240 : 320;
+            for (let i = 0; i < 48; i++) {
+                cursor += spacing + Math.floor(Math.random() * 140);
+                const r = Math.random();
+                if (r < 0.42) {
+                    levelObjs.push({ x: cursor, y: 0, type: 'spike', groupId: 0 });
+                    if (speed > 11 && Math.random() > 0.45) {
+                        levelObjs.push({ x: cursor + 40, y: 0, type: 'spike', groupId: 0 });
+                    }
+                } else if (r < 0.75) {
+                    const grp = i + 10;
+                    levelObjs.push({ x: cursor - 140, y: 120, type: 'move_trigger', targetGroup: grp, moveX: 0, moveY: 10, duration: 0.4 });
+                    levelObjs.push({ x: cursor, y: -40, type: 'block', groupId: grp });
+                    levelObjs.push({ x: cursor + 40, y: -40, type: 'block', groupId: grp });
+                } else {
+                    levelObjs.push({ x: cursor, y: 0, type: 'pad', groupId: 0 });
+                    levelObjs.push({ x: cursor + 160, y: 80, type: 'block', groupId: 0 });
+                }
+            }
+        }
+
+        resetPlayerRun();
+        isPlaying = true;
+        cancelAnimationFrame(animId);
+        animId = requestAnimationFrame(updatePlayLoop);
+    }
+
+    function resetPlayerRun() {
+        const floorY = playCanvas.height * 0.76;
+        camX = 0;
+        cube.y = floorY - cube.size;
+        cube.vy = 0;
+        cube.rot = 0;
+        cube.onGround = true;
+        activeGroupMoves = {};
+        levelObjs.forEach(o => { o._triggered = false; o._usedOrb = false; });
+        playSongTrack(playConfig.song || 'STEREO MADNESS', 0);
+    }
+
+    function stopPlayableLevel() {
+        isPlaying = false;
+        cancelAnimationFrame(animId);
+        stopAllAudio();
+        showScreen('screen-level-info');
+    }
+
+    function triggerJump() {
+        if (cube.onGround) {
+            cube.vy = -14.8;
+            cube.onGround = false;
+            return;
+        }
+        // Check mid-air Orb click
+        const floorY = playCanvas.height * 0.76;
+        for (const obj of levelObjs) {
+            if (!obj.type.includes('orb') || obj._usedOrb) continue;
+            const off = getGroupOffset(obj.groupId, activeGroupMoves);
+            const ox = (obj.x + off.dx) - camX;
+            const oy = floorY - (obj.y + off.dy) - 40;
+            if (Math.abs((cube.x + 20) - (ox + 20)) < 48 && Math.abs((cube.y + 20) - (oy + 20)) < 48) {
+                obj._usedOrb = true;
+                cube.vy = obj.type === 'orb_black' ? 18 : -15.5;
+                cube.onGround = false;
+                break;
+            }
+        }
+    }
+
+    playCanvas.addEventListener('pointerdown', () => {
+        cube.holdingJump = true;
+        triggerJump();
+    });
+    window.addEventListener('pointerup', () => { cube.holdingJump = false; });
+    window.addEventListener('keydown', e => {
+        if (e.code === 'Space' || e.code === 'ArrowUp') {
+            cube.holdingJump = true;
+            triggerJump();
+        }
+    });
+    window.addEventListener('keyup', e => {
+        if (e.code === 'Space' || e.code === 'ArrowUp') cube.holdingJump = false;
+    });
+
+    function updatePlayLoop() {
+        if (!isPlaying) return;
+
+        const W = playCanvas.width;
+        const H = playCanvas.height;
+        const floorY = H * 0.76;
+
+        camX += playConfig.speed;
+        cube.vy += 0.88;
+        cube.y += cube.vy;
+
+        if (cube.y + cube.size >= floorY) {
+            cube.y = floorY - cube.size;
+            cube.vy = 0;
+            cube.onGround = true;
+            cube.rot = Math.round(cube.rot / (Math.PI / 2)) * (Math.PI / 2);
+            if (cube.holdingJump) triggerJump();
+        } else {
+            cube.onGround = false;
+            cube.rot += 0.13;
+        }
+
+        // Fire Move Triggers
+        const playerWorldX = camX + cube.x;
+        for (const obj of levelObjs) {
+            if (obj.type === 'move_trigger' && !obj._triggered && playerWorldX >= obj.x) {
+                obj._triggered = true;
+                const grp = obj.targetGroup || 1;
+                if (!activeGroupMoves[grp]) activeGroupMoves[grp] = { dx: 0, dy: 0, anims: [] };
+                activeGroupMoves[grp].anims.push({
+                    totalDx: (obj.moveX || 0) * 4,
+                    totalDy: (obj.moveY || 0) * 4,
+                    elapsed: 0,
+                    duration: Math.max(0.02, obj.duration ?? 0.5)
+                });
+            }
+        }
+
+        // Update Moving Groups
+        Object.keys(activeGroupMoves).forEach(g => {
+            const state = activeGroupMoves[g];
+            let sumX = 0, sumY = 0;
+            state.anims.forEach(a => {
+                a.elapsed = Math.min(a.duration, a.elapsed + 1 / 60);
+                const t = a.elapsed / a.duration;
+                sumX += a.totalDx * t;
+                sumY += a.totalDy * t;
+            });
+            state.dx = sumX;
+            state.dy = sumY;
+        });
+
+        // Object Collisions
+        for (const obj of levelObjs) {
+            if (obj.type.includes('trigger')) continue;
+            const off = getGroupOffset(obj.groupId, activeGroupMoves);
+            const ox = (obj.x + off.dx) - camX;
+            const oy = floorY - (obj.y + off.dy) - 40;
+            if (ox + 40 < cube.x || ox > cube.x + cube.size) continue;
+
+            if (obj.type.includes('pad')) {
+                if (cube.y + cube.size >= oy + 24 && cube.y <= oy + 40) {
+                    cube.vy = -19.2;
+                    cube.onGround = false;
+                }
+            } else if (obj.type.includes('spike') || obj.type === 'saw' || obj.type === 'blade') {
+                if (cube.x + cube.size - 9 > ox + 9 && cube.x + 9 < ox + 31 &&
+                    cube.y + cube.size - 8 > oy + 10 && cube.y + 8 < oy + 40) {
+                    resetPlayerRun();
+                    break;
+                }
+            } else if (!obj.type.includes('orb') && obj.type !== 'coin') {
+                if (cube.y + cube.size > oy && cube.y < oy + 40) {
+                    const prevBottom = (cube.y - cube.vy) + cube.size;
+                    if (prevBottom <= oy + 15 && cube.vy >= 0) {
+                        cube.y = oy - cube.size;
+                        cube.vy = 0;
+                        cube.onGround = true;
+                        cube.rot = Math.round(cube.rot / (Math.PI / 2)) * (Math.PI / 2);
+                        if (cube.holdingJump) triggerJump();
+                    } else {
+                        resetPlayerRun();
+                        break;
+                    }
+                }
+            }
+        }
+
+        // Render Background
+        const grad = pCtx.createLinearGradient(0, 0, 0, H);
+        grad.addColorStop(0, playConfig.bgTop);
+        grad.addColorStop(1, playConfig.bgBot);
+        pCtx.fillStyle = grad;
+        pCtx.fillRect(0, 0, W, H);
+
+        // Render Parallax Grid
+        pCtx.strokeStyle = 'rgba(255,255,255,0.12)';
+        pCtx.lineWidth = 2;
+        const bgShift = -(camX * 0.4) % 90;
+        pCtx.beginPath();
+        for (let x = bgShift; x < W; x += 90) { pCtx.moveTo(x, 0); pCtx.lineTo(x, floorY); }
+        for (let y = 0; y < floorY; y += 90) { pCtx.moveTo(0, y); pCtx.lineTo(W, y); }
+        pCtx.stroke();
+
+        // Render Floor
+        pCtx.fillStyle = 'rgba(0,0,0,0.55)';
+        pCtx.fillRect(0, floorY, W, H - floorY);
+        pCtx.fillStyle = '#fff';
+        pCtx.fillRect(0, floorY, W, 4);
+
+        // Render Obstacles
+        for (const obj of levelObjs) {
+            if (obj.type.includes('trigger')) continue;
+            const off = getGroupOffset(obj.groupId, activeGroupMoves);
+            const ox = (obj.x + off.dx) - camX;
+            if (ox < -60 || ox > W + 60) continue;
+            const oy = floorY - (obj.y + off.dy) - 40;
+            drawEditorObjectShape(pCtx, obj.type, ox, oy, 40, false, {});
+        }
+
+        // Render Player Cube
+        pCtx.save();
+        pCtx.translate(cube.x + cube.size / 2, cube.y + cube.size / 2);
+        pCtx.rotate(cube.rot);
+        pCtx.fillStyle = cubeColors[colorIdx];
+        pCtx.fillRect(-cube.size / 2, -cube.size / 2, cube.size, cube.size);
+        pCtx.strokeStyle = '#000';
+        pCtx.lineWidth = 4;
+        pCtx.strokeRect(-cube.size / 2, -cube.size / 2, cube.size, cube.size);
+        pCtx.fillStyle = '#ffee00';
+        pCtx.fillRect(-cube.size / 4, -cube.size / 4, cube.size / 2, cube.size / 2);
+        pCtx.restore();
+
+        // Progress Bar
+        const maxDist = (levelObjs[levelObjs.length - 1]?.x || 4000) + 400;
+        const pct = Math.min(100, Math.floor((camX / maxDist) * 100));
+        document.getElementById('play-prog-bar').style.width = pct + '%';
+        document.getElementById('play-pct-txt').innerText = pct + '%';
+
+        if (pct >= 100) {
+            stopPlayableLevel();
+            return;
+        }
+
+        animId = requestAnimationFrame(updatePlayLoop);
+    }
+
+    // Boot Initialization
+    window.addEventListener('resize', () => {
+        resizeEditorCanvas();
+        drawEditorCanvas();
+    });
+    initFilterFaces();
+    initGarageGrid();
+    populateEditorPalette('build');
+</script>
+</body>
+</html>
